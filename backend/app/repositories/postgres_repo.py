@@ -4,6 +4,7 @@ repositories/postgres_repo.py
 Data access for PostgreSQL tables.
 """
 
+from typing import Optional
 from sqlalchemy import select, update
 
 from app.db.models import Upload
@@ -40,15 +41,18 @@ class PostgresRepo:
     async def update_upload_status(
         job_id: str, 
         status: str, 
-        pipeline_stage: str | None = None,
-        error_message: str | None = None
-    ) -> Upload | None:
+        pipeline_stage: Optional[str] = None,
+        error_message: Optional[str] = None,
+        entities_extracted: Optional[int] = None
+    ) -> Optional[Upload]:
         async with get_db_session() as db:
             values = {"status": status}
             if pipeline_stage is not None:
                 values["pipeline_stage"] = pipeline_stage
             if error_message is not None:
                 values["error_message"] = error_message
+            if entities_extracted is not None:
+                values["entities_extracted"] = entities_extracted
                 
             result = await db.execute(
                 update(Upload)
