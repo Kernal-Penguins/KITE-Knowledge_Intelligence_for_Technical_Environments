@@ -13,13 +13,11 @@ LOCKED: Do not add fields without updating ontology.py and neo4j_repo.py.
 """
 from __future__ import annotations
 
-from datetime import date, datetime
-from typing import Optional
+from datetime import date
 
 from pydantic import BaseModel, Field
 
-from app.shared.ontology import Severity, Criticality, DocType, RelType, NodeLabel
-
+from app.shared.ontology import Criticality, DocType, NodeLabel, RelType, Severity
 
 # ──────────────────────────────────────────────────────────────
 #  Intermediate Document Schema  (output of parser_service.py)
@@ -29,7 +27,7 @@ class DocumentTable(BaseModel):
     """A structured table extracted from a document."""
     headers: list[str]
     rows: list[list[str]]
-    caption: Optional[str] = None
+    caption: str | None = None
 
 
 class ParsedDocument(BaseModel):
@@ -55,8 +53,8 @@ class Equipment(BaseModel):
     """Equipment node. Primary identifier: tag_id."""
     tag_id: str
     type: str
-    location: Optional[str] = None
-    criticality: Optional[Criticality] = None
+    location: str | None = None
+    criticality: Criticality | None = None
     aliases: list[str] = Field(default_factory=list)
     source_doc_ids: list[str] = Field(default_factory=list)
 
@@ -65,8 +63,8 @@ class Failure(BaseModel):
     """Failure event node. Primary identifier: failure_id."""
     failure_id: str
     description: str
-    date: Optional[date] = None
-    severity: Optional[Severity] = None
+    date: date | None = None
+    severity: Severity | None = None
     equipment_tag: str                 # FK → Equipment.tag_id
     source_doc_ids: list[str] = Field(default_factory=list)
 
@@ -75,8 +73,8 @@ class Procedure(BaseModel):
     """Operating or maintenance procedure node. Primary identifier: procedure_id."""
     procedure_id: str
     title: str
-    version: Optional[str] = None
-    governing_reg: Optional[str] = None   # FK → Regulation.reg_id
+    version: str | None = None
+    governing_reg: str | None = None   # FK → Regulation.reg_id
     source_doc_ids: list[str] = Field(default_factory=list)
 
 
@@ -84,25 +82,25 @@ class Person(BaseModel):
     """Personnel node. Primary identifier: person_id."""
     person_id: str
     name: str
-    role: Optional[str] = None
-    certification: Optional[str] = None
+    role: str | None = None
+    certification: str | None = None
     source_doc_ids: list[str] = Field(default_factory=list)
 
 
 class Regulation(BaseModel):
     """Regulatory reference node. Primary identifier: reg_id."""
     reg_id: str
-    source: Optional[str] = None    # e.g. "OISD-105"
-    clause: Optional[str] = None    # e.g. "Clause 4.2"
+    source: str | None = None    # e.g. "OISD-105"
+    clause: str | None = None    # e.g. "Clause 4.2"
     source_doc_ids: list[str] = Field(default_factory=list)
 
 
 class Inspection(BaseModel):
     """Inspection record node. Primary identifier: inspection_id."""
     inspection_id: str
-    date: Optional[date] = None
-    result: Optional[str] = None
-    inspector_ref: Optional[str] = None   # FK → Person.person_id
+    date: date | None = None
+    result: str | None = None
+    inspector_ref: str | None = None   # FK → Person.person_id
     equipment_tag: str                     # FK → Equipment.tag_id
     source_doc_ids: list[str] = Field(default_factory=list)
 
@@ -110,18 +108,18 @@ class Inspection(BaseModel):
 class WorkOrder(BaseModel):
     """Work order node. Primary identifier: wo_id."""
     wo_id: str
-    date: Optional[date] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
+    date: date | None = None
+    description: str | None = None
+    status: str | None = None
     source_doc_ids: list[str] = Field(default_factory=list)
 
 
 class Incident(BaseModel):
     """Incident / near-miss record node. Primary identifier: incident_id."""
     incident_id: str
-    date: Optional[date] = None
-    description: Optional[str] = None
-    severity: Optional[Severity] = None
+    date: date | None = None
+    description: str | None = None
+    severity: Severity | None = None
     source_doc_ids: list[str] = Field(default_factory=list)
 
 
@@ -176,4 +174,4 @@ class DocumentChunk(BaseModel):
     text: str
     chunk_index: int
     graph_node_ids: list[str] = Field(default_factory=list)   # linked Neo4j node IDs
-    embedding: Optional[list[float]] = None
+    embedding: list[float] | None = None

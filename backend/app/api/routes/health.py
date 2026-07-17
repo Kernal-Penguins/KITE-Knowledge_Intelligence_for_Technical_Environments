@@ -6,20 +6,21 @@ GET /version  — version metadata
 GET /metrics  — live system counters
 """
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
+from app.config import settings
 from app.infrastructure.logger import log
 from app.infrastructure.neo4j_client import neo4j_client
-from app.infrastructure.qdrant_client import qdrant_client
 from app.infrastructure.postgres_client import ping_db
+from app.infrastructure.qdrant_client import qdrant_client
 from app.shared.api_models import (
-    HealthResponse, HealthService,
-    VersionResponse,
+    HealthResponse,
+    HealthService,
     MetricsResponse,
+    VersionResponse,
 )
-from app.config import settings
 
 router = APIRouter(tags=["Observability"])
 
@@ -45,7 +46,7 @@ async def health() -> HealthResponse:
             "qdrant":   HealthService(status="connected"   if qdrant_ok else "unreachable"),
             "postgres": HealthService(status="connected"   if pg_ok     else "unreachable"),
         },
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
     )
 
     log.info(
@@ -106,9 +107,9 @@ async def metrics() -> MetricsResponse:
     agent_counts    = {"rca": 0, "compliance": 0, "lessons": 0}
 
     try:
-        from sqlalchemy import text, func, select
+        from sqlalchemy import text
+
         from app.infrastructure.postgres_client import get_db_session
-        from app.db.models import Upload, ChatMessage, AgentLog
 
         async with get_db_session() as db:
             r = await db.execute(
