@@ -32,7 +32,7 @@ def _configure_logging() -> None:
     if settings.is_production:
         # JSON output for log aggregators (Render, etc.)
         processors = shared_processors + [
-            structlog.processors.dict_tracebacks,
+            structlog.processors.ExceptionDictTransformer(),
             structlog.processors.JSONRenderer(),
         ]
     else:
