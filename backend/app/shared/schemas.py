@@ -11,8 +11,8 @@ These are the canonical data shapes used across all layers:
 
 LOCKED: Do not add fields without updating ontology.py and neo4j_repo.py.
 """
-from __future__ import annotations
-
+import datetime
+import datetime
 from datetime import date
 
 from pydantic import BaseModel, Field
@@ -63,7 +63,7 @@ class Failure(BaseModel):
     """Failure event node. Primary identifier: failure_id."""
     failure_id: str
     description: str
-    date: date | None = None
+    date: datetime.date | None = None
     severity: Severity | None = None
     equipment_tag: str                 # FK → Equipment.tag_id
     source_doc_ids: list[str] = Field(default_factory=list)
@@ -98,7 +98,7 @@ class Regulation(BaseModel):
 class Inspection(BaseModel):
     """Inspection record node. Primary identifier: inspection_id."""
     inspection_id: str
-    date: date | None = None
+    date: datetime.date | None = None
     result: str | None = None
     inspector_ref: str | None = None   # FK → Person.person_id
     equipment_tag: str                     # FK → Equipment.tag_id
@@ -108,7 +108,7 @@ class Inspection(BaseModel):
 class WorkOrder(BaseModel):
     """Work order node. Primary identifier: wo_id."""
     wo_id: str
-    date: date | None = None
+    date: datetime.date | None = None
     description: str | None = None
     status: str | None = None
     source_doc_ids: list[str] = Field(default_factory=list)
@@ -117,7 +117,7 @@ class WorkOrder(BaseModel):
 class Incident(BaseModel):
     """Incident / near-miss record node. Primary identifier: incident_id."""
     incident_id: str
-    date: date | None = None
+    date: datetime.date | None = None
     description: str | None = None
     severity: Severity | None = None
     source_doc_ids: list[str] = Field(default_factory=list)
