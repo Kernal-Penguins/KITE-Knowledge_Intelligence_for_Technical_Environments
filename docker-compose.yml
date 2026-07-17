@@ -1,116 +1,39 @@
+version: '3.8'
+
 services:
-
-  # ── FastAPI Backend ──────────────────────────────────────
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: kite-backend
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      NEO4J_URI: bolt://neo4j:7687
-      QDRANT_URL: http://qdrant:6333
-      DATABASE_URL: postgresql+asyncpg://kite:kite_password@postgres:5432/kite
-    depends_on:
-      neo4j:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ./backend/data/documents:/app/data/documents:ro
-    restart: unless-stopped
-    networks:
-      - kite-net
-
-  # ── React Frontend ───────────────────────────────────────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: kite-frontend
-    ports:
-      - "5173:5173"
-    environment:
-      VITE_API_BASE_URL: http://localhost:8000
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - kite-net
-
-  # ── Neo4j ────────────────────────────────────────────────
+  # 1. Neo4j (Knowledge Graph Database)
   neo4j:
     image: neo4j:5-community
-    container_name: kite-neo4j
     ports:
-      - "7474:7474"   # Neo4j Browser
-      - "7687:7687"   # Bolt protocol
+      - "7474:7474" # HTTP UI
+      - "7687:7687" # Bolt port
     environment:
-      NEO4J_AUTH: neo4j/kite_password
-      NEO4J_PLUGINS: '["apoc"]'
-      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      - NEO4J_AUTH=neo4j/kite_password
+      - NEO4J_PLUGINS=["apoc"]
     volumes:
       - neo4j_data:/data
-      - neo4j_logs:/logs
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:7474 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-    networks:
-      - kite-net
 
-  # ── Qdrant ───────────────────────────────────────────────
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: kite-qdrant
-    ports:
-      - "6333:6333"   # REST API
-      - "6334:6334"   # gRPC
-    volumes:
-      - qdrant_data:/qdrant/storage
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:6333/healthz || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-    networks:
-      - kite-net
-
-  # ── PostgreSQL ───────────────────────────────────────────
+  # 2. PostgreSQL (Relational Database for logging and jobs)
   postgres:
-    image: postgres:16-alpine
-    container_name: kite-postgres
+    image: postgres:15
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: kite
-      POSTGRES_USER: kite
-      POSTGRES_PASSWORD: kite_password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=kite_password
+      - POSTGRES_DB=kite
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kite -d kite"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-    networks:
-      - kite-net
+      - pg_data:/var/lib/postgresql/data
+
+  # 3. Qdrant (Vector Database for embeddings)
+  qdrant:
+    image: qdrant/qdrant:v1.7.0
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
 
 volumes:
   neo4j_data:
-  neo4j_logs:
+  pg_data:
   qdrant_data:
-  postgres_data:
-
-networks:
-  kite-net:
-    driver: bridge
