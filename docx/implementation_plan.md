@@ -974,3 +974,12 @@ dev = [
 }
 ```
 
+---
+
+## Part 19 — Ontology Governance
+
+To ensure the knowledge graph's schema evolves systematically without drift, the following governance rules apply:
+- **Versioning**: The ontology (`shared/ontology.py` and `shared/schemas.py`) acts as the single source of truth. Any change to node types, relationship types, or properties must be treated as a breaking API change and versioned accordingly (e.g. `v2`).
+- **Review Process**: Before a new node or edge type is added, the change must be reviewed by both a Domain Expert (to confirm industrial validity) and a Data Engineer (to confirm Neo4j performance implications).
+- **Migration Strategy**: Introducing a new edge type requires a retroactive batch job (`scripts/ontology_migration.py`) to infer the new edges across existing data, ensuring historical documents are not orphaned under the old schema.
+

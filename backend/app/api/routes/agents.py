@@ -61,3 +61,18 @@ async def run_compliance_audit():
     except Exception as e:
         await postgres_repo.log_agent_run("compliance", None, "failed", str(e))
         raise HTTPException(status_code=500, detail=str(e))
+
+from pydantic import BaseModel
+class ReviewRequest(BaseModel):
+    status: str
+
+@router.post("/compliance/flags/{flag_hash}/review")
+async def review_compliance_flag(flag_hash: str, req: ReviewRequest):
+    if req.status not in ["dismissed", "confirmed", "pending"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+        
+    try:
+        await postgres_repo.log_compliance_review(flag_hash, req.status)
+        return {"status": "success", "flag_hash": flag_hash, "new_status": req.status}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

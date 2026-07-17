@@ -67,13 +67,37 @@ class ComplianceService:
             res_5 = await session.run(cypher_5)
             results["rule_5_incident_closure"] = await res_5.data()
 
-        total_gaps = sum(len(gaps) for gaps in results.values())
+        from app.repositories.postgres_repo import postgres_repo
+        import hashlib
+        
+        dismissed_flags = await postgres_repo.get_dismissed_flags()
+        dismissed_set = set(dismissed_flags)
+
+        filtered_results = {}
+        for rule_name, gaps in results.items():
+            filtered_gaps = []
+            for gap in gaps:
+                # Find the entity id (usually the first value in the dict that ends with _id)
+                entity_id = next((str(v) for k, v in gap.items() if k.endswith("_id")), "unknown")
+                
+                # Generate a stable hash for the gap
+                hash_input = f"{rule_name}_{entity_id}".encode("utf-8")
+                flag_hash = hashlib.sha256(hash_input).hexdigest()
+                
+                gap["flag_hash"] = flag_hash
+                
+                if flag_hash not in dismissed_set:
+                    filtered_gaps.append(gap)
+                    
+            filtered_results[rule_name] = filtered_gaps
+
+        total_gaps = sum(len(gaps) for gaps in filtered_results.values())
         log.info("compliance_service.audit.completed", total_gaps=total_gaps)
         
         return {
             "status": "passed" if total_gaps == 0 else "failed",
             "total_gaps": total_gaps,
-            "details": results
+            "details": filtered_results
         }
 
 compliance_service = ComplianceService()

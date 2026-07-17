@@ -46,11 +46,17 @@ class HybridService:
                     relation = f"{record['n_label']}('{record['n_id']}') -[{record['r_type']}]-> {record['m_label']}('{record['m_id']}')"
                     graph_context.append(relation)
                     
-        log.info("hybrid_service.completed", chunks=len(chunks), graph_edges=len(graph_context))
+        from app.providers.gemini_provider import GeminiProvider
+        provider = GeminiProvider()
+        
+        filtered_chunks = await provider.rerank_context(query, chunks)
+        filtered_graph = await provider.rerank_context(query, graph_context)
+
+        log.info("hybrid_service.completed", chunks=len(filtered_chunks), graph_edges=len(filtered_graph))
         
         return {
-            "chunks": chunks,
-            "graph_context": graph_context
+            "chunks": filtered_chunks,
+            "graph_context": filtered_graph
         }
 
 hybrid_service = HybridService()
