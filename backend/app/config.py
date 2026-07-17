@@ -46,8 +46,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str   = "postgresql+asyncpg://kite:kite_password@localhost:5432/kite"
 
     # ── Embedding & Reranking ────────────────────────────────
-    EMBEDDING_MODEL: str    = "BAAI/bge-large-en-v1.5"
-    RERANKER_MODEL: str     = "BAAI/bge-reranker-large"
+    EMBEDDING_MODEL: str    = "sentence-transformers/all-MiniLM-L6-v2"
+    RERANKER_MODEL: str     = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
     @property
     def cors_origins_list(self) -> list[str]:

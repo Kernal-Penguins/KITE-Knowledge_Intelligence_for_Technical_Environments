@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+data/documents/
+tests/
+evaluation/
+test_doc.*
+test_docling.py
+*.log
+.env

@@ -1,13 +1,18 @@
-FROM node:24-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
-COPY package.json .
-RUN npm install
+
+# Copy package files first for layer caching
+COPY package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps
+
+# Copy source and build
 COPY . .
 RUN npm run build
 
+# Production: serve with nginx on port 80
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 5173
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
