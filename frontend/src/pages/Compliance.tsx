@@ -1,10 +1,9 @@
-import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, XCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const Compliance = () => {
   const queryClient = useQueryClient();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['compliance'],
     queryFn: async () => {
       const res = await fetch(`/api/agents/compliance`);
