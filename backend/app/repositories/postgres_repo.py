@@ -108,4 +108,27 @@ class PostgresRepo:
             )
             await db.commit()
 
+    @staticmethod
+    async def log_evaluation(query: str, latency: float, score: float, details: str) -> None:
+        """Log an evaluation benchmark result."""
+        async with get_db_session() as db:
+            from sqlalchemy import text
+            await db.execute(
+                text("""
+                CREATE TABLE IF NOT EXISTS evaluation_results (
+                    id SERIAL PRIMARY KEY,
+                    query TEXT NOT NULL,
+                    latency_sec FLOAT NOT NULL,
+                    score FLOAT NOT NULL,
+                    details TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """)
+            )
+            await db.execute(
+                text("INSERT INTO evaluation_results (query, latency_sec, score, details) VALUES (:q, :l, :s, :d)"),
+                {"q": query, "l": latency, "s": score, "d": details}
+            )
+            await db.commit()
+
 postgres_repo = PostgresRepo()
