@@ -31,7 +31,25 @@ class Neo4jClient:
             auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
         )
         await self._driver.verify_connectivity()
+        await self._init_constraints()
         log.info("neo4j.connected", uri=settings.NEO4J_URI)
+
+    async def _init_constraints(self) -> None:
+        """Ensure uniqueness constraints for all node types."""
+        constraints = [
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (e:Equipment) REQUIRE e.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (f:Failure) REQUIRE f.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (p:Procedure) REQUIRE p.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person) REQUIRE p.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (r:Regulation) REQUIRE r.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (i:Inspection) REQUIRE i.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (w:WorkOrder) REQUIRE w.id IS UNIQUE",
+            "CREATE CONSTRAINT IF NOT EXISTS FOR (i:Incident) REQUIRE i.id IS UNIQUE",
+        ]
+        async with self.session() as session:
+            for query in constraints:
+                await session.run(query)
+        log.info("neo4j.constraints_initialized")
 
     async def close(self) -> None:
         """Close the driver. Called on app shutdown."""
