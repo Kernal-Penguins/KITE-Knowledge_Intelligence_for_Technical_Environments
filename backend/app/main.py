@@ -4,24 +4,23 @@ app/main.py
 FastAPI application factory with lifespan management.
 Registers all routers and middleware.
 """
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# Routers
+from app.api.routes.health import router as health_router
 from app.config import settings
 from app.infrastructure.logger import log
 from app.infrastructure.neo4j_client import neo4j_client
+from app.infrastructure.postgres_client import close_db, init_db
 from app.infrastructure.qdrant_client import qdrant_client
-from app.infrastructure.postgres_client import init_db, close_db
-
-# Routers
-from app.api.routes.health import router as health_router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     """
     Application lifespan handler.
     Startup: connect all databases, create PG tables.
@@ -73,13 +72,13 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
 
     # Day 2+ routers (added as built):
-    # from app.api.routes.ingest import router as ingest_router
+    from app.api.routes.ingest import router as ingest_router
     # from app.api.routes.query import router as query_router
     # from app.api.routes.graph import router as graph_router
     # from app.api.routes.agents.rca import router as rca_router
     # from app.api.routes.agents.compliance import router as compliance_router
     # from app.api.routes.agents.lessons import router as lessons_router
-    # app.include_router(ingest_router, prefix="/api/v1")
+    app.include_router(ingest_router, prefix="/api/v1")
     # app.include_router(query_router,  prefix="/api/v1")
     # app.include_router(graph_router,  prefix="/api/v1")
     # app.include_router(rca_router,    prefix="/api/v1/agents")
