@@ -49,7 +49,33 @@ class GeminiProvider(LLMProvider):
         return result
 
     async def adjudicate_entities(self, candidate_a: str, candidate_b: str, context: str) -> str:
-        pass
+        """Adjudicate between two similar entity strings."""
+        log.info("gemini.adjudicate.started", a=candidate_a, b=candidate_b)
+        prompt = f"""
+        You are an industrial knowledge graph entity resolution assistant.
+        We have two candidate strings that might refer to the same entity.
+        Context: {context}
+        Candidate A: '{candidate_a}'
+        Candidate B: '{candidate_b}'
+        
+        If they refer to the same entity, return the best, most canonical name.
+        If they refer to different entities, reply strictly with 'DIFFERENT'.
+        Return ONLY the resolved string or 'DIFFERENT', with no extra text.
+        """
+        
+        def _call_api():
+            return self.client.models.generate_content(
+                model=self.FLASH,
+                contents=prompt,
+                config=genai.types.GenerateContentConfig(
+                    temperature=0.0,
+                )
+            )
+
+        response = await asyncio.to_thread(_call_api)
+        result = response.text.strip()
+        log.info("gemini.adjudicate.completed", result=result)
+        return result
 
     async def generate_answer(self, query: str, context: list[str], citations: list) -> str:
         pass
