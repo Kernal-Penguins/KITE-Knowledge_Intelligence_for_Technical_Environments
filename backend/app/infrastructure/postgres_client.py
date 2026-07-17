@@ -8,8 +8,8 @@ Usage:
     async with get_db_session() as session:
         ...
 """
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -21,7 +21,6 @@ from sqlalchemy.ext.asyncio import (
 from app.config import settings
 from app.db.models import Base
 from app.infrastructure.logger import log
-
 
 _engine: AsyncEngine | None = None
 _session_factory: async_sessionmaker | None = None
@@ -70,7 +69,7 @@ async def ping_db() -> bool:
 
 
 @asynccontextmanager
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session() -> AsyncGenerator[AsyncSession]:
     """Yield an async SQLAlchemy session."""
     if not _session_factory:
         raise RuntimeError("Database not initialised. Call init_db() first.")

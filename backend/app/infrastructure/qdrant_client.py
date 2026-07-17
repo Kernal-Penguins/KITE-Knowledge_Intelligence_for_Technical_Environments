@@ -11,7 +11,7 @@ from qdrant_client.http.models import Distance, VectorParams
 
 from app.config import settings
 from app.infrastructure.logger import log
-from app.shared.constants import QDRANT_COLLECTION_NAME, EMBEDDING_DIM
+from app.shared.constants import EMBEDDING_DIM, QDRANT_COLLECTION_NAME
 
 
 class QdrantClientWrapper:

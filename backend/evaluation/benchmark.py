@@ -15,9 +15,9 @@ from pathlib import Path
 
 import httpx
 
+from app.db.models import EvaluationResult, EvaluationRun
 from app.infrastructure.logger import log
-from app.infrastructure.postgres_client import init_db, get_db_session
-from app.db.models import EvaluationRun, EvaluationResult
+from app.infrastructure.postgres_client import get_db_session, init_db
 
 BENCHMARK_QUESTIONS_PATH = Path(__file__).parent / "benchmark_questions.json"
 API_BASE = "http://localhost:8000"

@@ -9,10 +9,10 @@ Usage:
     async with neo4j_client.session() as session:
         result = await session.run("MATCH (n) RETURN count(n)")
 """
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
-from neo4j import AsyncGraphDatabase, AsyncDriver, AsyncSession
+from neo4j import AsyncDriver, AsyncGraphDatabase, AsyncSession
 
 from app.config import settings
 from app.infrastructure.logger import log
@@ -49,7 +49,7 @@ class Neo4jClient:
             return False
 
     @asynccontextmanager
-    async def session(self, database: str = "neo4j") -> AsyncGenerator[AsyncSession, None]:
+    async def session(self, database: str = "neo4j") -> AsyncGenerator[AsyncSession]:
         """Yield an async Neo4j session."""
         if not self._driver:
             raise RuntimeError("Neo4j driver not initialised. Call connect() first.")
