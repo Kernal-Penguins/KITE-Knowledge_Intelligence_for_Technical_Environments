@@ -63,4 +63,49 @@ class PostgresRepo:
             await db.commit()
             return result.scalar_one_or_none()
 
+    @staticmethod
+    async def log_chat_message(query: str, answer: str, confidence: float) -> None:
+        """Log a chat query and response to the database."""
+        async with get_db_session() as db:
+            from sqlalchemy import text
+            await db.execute(
+                text("""
+                CREATE TABLE IF NOT EXISTS chat_messages (
+                    id SERIAL PRIMARY KEY,
+                    query TEXT NOT NULL,
+                    answer TEXT NOT NULL,
+                    confidence FLOAT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """)
+            )
+            await db.execute(
+                text("INSERT INTO chat_messages (query, answer, confidence) VALUES (:q, :a, :c)"),
+                {"q": query, "a": answer, "c": confidence}
+            )
+            await db.commit()
+
+    @staticmethod
+    async def log_agent_run(agent_type: str, target_id: str | None, status: str, result: str) -> None:
+        """Log an agent execution."""
+        async with get_db_session() as db:
+            from sqlalchemy import text
+            await db.execute(
+                text("""
+                CREATE TABLE IF NOT EXISTS agent_logs (
+                    id SERIAL PRIMARY KEY,
+                    agent_type TEXT NOT NULL,
+                    target_id TEXT,
+                    status TEXT NOT NULL,
+                    result TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """)
+            )
+            await db.execute(
+                text("INSERT INTO agent_logs (agent_type, target_id, status, result) VALUES (:a, :t, :s, :r)"),
+                {"a": agent_type, "t": target_id, "s": status, "r": result}
+            )
+            await db.commit()
+
 postgres_repo = PostgresRepo()
