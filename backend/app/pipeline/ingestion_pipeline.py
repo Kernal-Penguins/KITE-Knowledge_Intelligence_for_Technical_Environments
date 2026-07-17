@@ -129,4 +129,4 @@ async def run_ingestion(job_id: str, file_path: Path):
     except Exception as exc:
         log.error("pipeline.ingestion.failed", job_id=job_id, error=str(exc))
         await postgres_repo.update_upload_status(job_id, status="failed", error_message=str(exc))
-        raise
+        # Do not re-raise to ensure graceful degradation. The document simply stays in failed state.

@@ -1,14 +1,30 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, XCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const Compliance = () => {
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ['compliance'],
     queryFn: async () => {
       const res = await fetch(`/api/agents/compliance`);
       if (!res.ok) throw new Error("Failed to fetch Compliance audit");
       return res.json();
+    }
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: async ({ flagHash, status }: { flagHash: string, status: string }) => {
+      const res = await fetch(`/api/agents/compliance/flags/${flagHash}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error("Failed to review flag");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compliance'] });
     }
   });
 
@@ -69,10 +85,26 @@ const Compliance = () => {
                   {violations.length > 0 ? (
                     <div className="divide-y divide-gray-800">
                       {violations.map((v: any, i: number) => (
-                        <div key={i} className="p-4 px-6 text-sm flex gap-4">
+                        <div key={i} className="p-4 px-6 text-sm flex gap-4 items-center">
                           <span className="text-red-400 flex-shrink-0"><XCircle size={16}/></span>
-                          <span className="text-gray-300 font-mono text-xs bg-gray-800 px-2 py-1 rounded">{Object.values(v)[0] as string}</span>
-                          <span className="text-gray-400">{v.gap}</span>
+                          <span className="text-gray-300 font-mono text-xs bg-gray-800 px-2 py-1 rounded">{v[Object.keys(v).find(k => k.endsWith('_id')) || Object.keys(v)[0]] as string}</span>
+                          <span className="text-gray-400 flex-1">{v.gap}</span>
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => reviewMutation.mutate({ flagHash: v.flag_hash, status: 'confirmed' })}
+                              className="px-3 py-1 bg-gray-800 text-gray-300 rounded hover:bg-gray-700 hover:text-white text-xs transition-colors"
+                              disabled={reviewMutation.isPending}
+                            >
+                              Confirm
+                            </button>
+                            <button 
+                              onClick={() => reviewMutation.mutate({ flagHash: v.flag_hash, status: 'dismissed' })}
+                              className="px-3 py-1 bg-gray-800 text-gray-300 rounded hover:bg-gray-700 hover:text-white text-xs transition-colors"
+                              disabled={reviewMutation.isPending}
+                            >
+                              Dismiss
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>

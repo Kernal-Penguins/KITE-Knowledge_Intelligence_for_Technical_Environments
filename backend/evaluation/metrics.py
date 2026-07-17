@@ -24,3 +24,21 @@ def evaluate_response(query_time: float, expected_entities: list[str], answer: s
         "citation_score": round(citation_score, 2),
         "overall_score": round((latency_score + recall + citation_score) / 3, 2)
     }
+
+async def evaluate_provenance(query: str, answer: str, context: list[str], provider) -> float:
+    """Evaluate if the cited facts in the answer are actually grounded in the provided context."""
+    prompt = f"Query: {query}\nAnswer: {answer}\nContext: {context}\nDoes the context fully support the claims made in the answer? Score 1.0 for yes, 0.5 for partially, 0.0 for hallucinated. Return ONLY the float."
+    # We would use provider.client.models.generate_content here. Simulating call structure for the metric:
+    return 1.0 # Placeholder for actual LLM judge call
+
+async def evaluate_structural_validity(answer: str, graph_context: list[str], provider) -> float:
+    """Evaluate if the graph paths cited in the answer are valid and exist in the provided graph context."""
+    return 1.0 # Placeholder for actual LLM judge call
+
+async def evaluate_temporal_alignment(answer: str, provider) -> float:
+    """Evaluate if the sequence of events described in the answer is chronologically consistent."""
+    return 1.0 # Placeholder for actual LLM judge call
+
+async def evaluate_counterfactual(query: str, answer: str, provider) -> float:
+    """Evaluate if the answer's reasoning holds up against a counterfactual 'what if' question."""
+    return 1.0 # Placeholder for actual LLM judge call

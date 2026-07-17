@@ -131,4 +131,42 @@ class PostgresRepo:
             )
             await db.commit()
 
+    @staticmethod
+    async def log_compliance_review(flag_hash: str, status: str) -> None:
+        """Log a human review of a compliance flag."""
+        async with get_db_session() as db:
+            from sqlalchemy import text
+            await db.execute(
+                text("""
+                CREATE TABLE IF NOT EXISTS compliance_reviews (
+                    flag_hash TEXT PRIMARY KEY,
+                    status TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """)
+            )
+            await db.execute(
+                text("""
+                INSERT INTO compliance_reviews (flag_hash, status) 
+                VALUES (:f, :s) 
+                ON CONFLICT (flag_hash) DO UPDATE SET status = :s
+                """),
+                {"f": flag_hash, "s": status}
+            )
+            await db.commit()
+
+    @staticmethod
+    async def get_dismissed_flags() -> list[str]:
+        """Get a list of flag hashes that have been dismissed."""
+        async with get_db_session() as db:
+            from sqlalchemy import text
+            try:
+                result = await db.execute(
+                    text("SELECT flag_hash FROM compliance_reviews WHERE status = 'dismissed'")
+                )
+                return [row[0] for row in result.fetchall()]
+            except Exception:
+                # Table might not exist yet
+                return []
+
 postgres_repo = PostgresRepo()
