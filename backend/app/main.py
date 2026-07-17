@@ -55,8 +55,8 @@ def create_app() -> FastAPI:
         ),
         version=settings.APP_VERSION,
         lifespan=lifespan,
-        docs_url="/docs" if not settings.is_production else None,
-        redoc_url="/redoc" if not settings.is_production else None,
+        docs_url="/docs",
+        redoc_url="/redoc",
     )
 
     # ── CORS ─────────────────────────────────────────────────
@@ -69,21 +69,14 @@ def create_app() -> FastAPI:
     )
 
     # ── Routers ───────────────────────────────────────────────
-    app.include_router(health_router)
-
-    # Day 2+ routers (added as built):
     from app.api.routes.ingest import router as ingest_router
-    # from app.api.routes.query import router as query_router
-    # from app.api.routes.graph import router as graph_router
-    # from app.api.routes.agents.rca import router as rca_router
-    # from app.api.routes.agents.compliance import router as compliance_router
-    # from app.api.routes.agents.lessons import router as lessons_router
+    from app.api.routes.query import router as query_router
+    from app.api.routes.agents import router as agents_router
+
+    app.include_router(health_router)
     app.include_router(ingest_router, prefix="/api/v1")
-    # app.include_router(query_router,  prefix="/api/v1")
-    # app.include_router(graph_router,  prefix="/api/v1")
-    # app.include_router(rca_router,    prefix="/api/v1/agents")
-    # app.include_router(compliance_router, prefix="/api/v1/agents")
-    # app.include_router(lessons_router,    prefix="/api/v1/agents")
+    app.include_router(query_router, prefix="/api/v1")
+    app.include_router(agents_router, prefix="/api/v1")
 
     return app
 

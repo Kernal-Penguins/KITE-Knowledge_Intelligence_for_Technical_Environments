@@ -6,6 +6,7 @@ Cross-encoder reranker for sorting hybrid search results.
 from sentence_transformers import CrossEncoder
 
 from app.infrastructure.logger import log
+from app.shared.constants import RERANKER_MODEL
 
 
 class RerankerService:
@@ -19,10 +20,9 @@ class RerankerService:
 
     def _load_model(self):
         if self.model is None:
-            model_name = "BAAI/bge-reranker-large"
-            log.info("reranker.loading", model=model_name)
-            self.model = CrossEncoder(model_name, max_length=512)
-            log.info("reranker.loaded", model=model_name)
+            log.info("reranker.loading", model=RERANKER_MODEL)
+            self.model = CrossEncoder(RERANKER_MODEL, max_length=512)
+            log.info("reranker.loaded", model=RERANKER_MODEL)
 
     def rerank(self, query: str, documents: list[str], top_k: int = 5) -> list[dict]:
         if not documents:

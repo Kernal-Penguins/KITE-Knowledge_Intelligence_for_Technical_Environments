@@ -10,9 +10,9 @@ LOCKED: Changes here affect all layers. Update tests accordingly.
 # ──────────────────────────────────────────────────────────────
 #  Embedding & Reranking
 # ──────────────────────────────────────────────────────────────
-EMBEDDING_MODEL: str  = "BAAI/bge-large-en-v1.5"
-RERANKER_MODEL: str   = "BAAI/bge-reranker-large"
-EMBEDDING_DIM: int    = 1024          # bge-large-en-v1.5 output dimension
+EMBEDDING_MODEL: str  = "sentence-transformers/all-MiniLM-L6-v2"
+RERANKER_MODEL: str   = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+EMBEDDING_DIM: int    = 384          # all-MiniLM-L6-v2 output dimension
 
 # ──────────────────────────────────────────────────────────────
 #  Chunking
