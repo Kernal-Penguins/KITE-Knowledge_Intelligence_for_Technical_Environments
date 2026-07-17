@@ -1,0 +1,162 @@
+[
+  {
+    "id": "BQ-001",
+    "question": "What is the most recent failure recorded for pump P-104?",
+    "category": "graph_traversal",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "work_order"],
+    "expected_entities": ["P-104"]
+  },
+  {
+    "id": "BQ-002",
+    "question": "What was the root cause of the bearing seizure on P-104 and how was it resolved?",
+    "category": "rca",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "work_order"],
+    "expected_entities": ["P-104", "bearing seizure"]
+  },
+  {
+    "id": "BQ-003",
+    "question": "Which critical equipment has not been inspected in the last 90 days?",
+    "category": "compliance",
+    "requires_graph": true,
+    "doc_types_required": ["inspection_report"],
+    "expected_entities": []
+  },
+  {
+    "id": "BQ-004",
+    "question": "List all work orders associated with equipment in Unit 3.",
+    "category": "graph_traversal",
+    "requires_graph": true,
+    "doc_types_required": ["work_order"],
+    "expected_entities": ["Unit 3"]
+  },
+  {
+    "id": "BQ-005",
+    "question": "What procedures govern the lockout-tagout process for pumps?",
+    "category": "semantic",
+    "requires_graph": false,
+    "doc_types_required": ["sop"],
+    "expected_entities": ["LOTO", "lockout-tagout"]
+  },
+  {
+    "id": "BQ-006",
+    "question": "Who performed the last inspection on V-201?",
+    "category": "graph_traversal",
+    "requires_graph": true,
+    "doc_types_required": ["inspection_report"],
+    "expected_entities": ["V-201"]
+  },
+  {
+    "id": "BQ-007",
+    "question": "Which equipment has had more than 3 failures in the past year?",
+    "category": "aggregation",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log"],
+    "expected_entities": []
+  },
+  {
+    "id": "BQ-008",
+    "question": "What OISD regulations apply to centrifugal pumps?",
+    "category": "compliance",
+    "requires_graph": true,
+    "doc_types_required": ["sop", "inspection_report"],
+    "expected_entities": ["OISD", "centrifugal pump"]
+  },
+  {
+    "id": "BQ-009",
+    "question": "Has a similar failure to the P-104 bearing seizure occurred on any other equipment?",
+    "category": "lessons_learned",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "incidents"],
+    "expected_entities": ["P-104", "bearing seizure"]
+  },
+  {
+    "id": "BQ-010",
+    "question": "What is the complete failure history of compressor C-301?",
+    "category": "rca",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "work_order", "inspection_report"],
+    "expected_entities": ["C-301"]
+  },
+  {
+    "id": "BQ-011",
+    "question": "Which technicians are certified for LOTO procedures?",
+    "category": "semantic",
+    "requires_graph": true,
+    "doc_types_required": ["sop", "work_order"],
+    "expected_entities": ["LOTO", "certification"]
+  },
+  {
+    "id": "BQ-012",
+    "question": "What near-miss incidents have been reported involving rotating equipment?",
+    "category": "semantic",
+    "requires_graph": false,
+    "doc_types_required": ["incidents"],
+    "expected_entities": ["near-miss", "rotating equipment"]
+  },
+  {
+    "id": "BQ-013",
+    "question": "Which open work orders are overdue?",
+    "category": "compliance",
+    "requires_graph": true,
+    "doc_types_required": ["work_order"],
+    "expected_entities": []
+  },
+  {
+    "id": "BQ-014",
+    "question": "What corrective actions were taken after the V-201 high-pressure alert?",
+    "category": "graph_traversal",
+    "requires_graph": true,
+    "doc_types_required": ["incidents", "work_order"],
+    "expected_entities": ["V-201"]
+  },
+  {
+    "id": "BQ-015",
+    "question": "Summarise all maintenance activity on Unit 3 equipment in the last 6 months.",
+    "category": "cross_functional",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "work_order", "inspection_report"],
+    "expected_entities": ["Unit 3"]
+  },
+  {
+    "id": "BQ-016",
+    "question": "What is the step-by-step procedure for emergency shutdown of P-104?",
+    "category": "semantic",
+    "requires_graph": false,
+    "doc_types_required": ["sop"],
+    "expected_entities": ["P-104", "emergency shutdown"]
+  },
+  {
+    "id": "BQ-017",
+    "question": "Which failures were resolved without a formal work order?",
+    "category": "compliance",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "work_order"],
+    "expected_entities": []
+  },
+  {
+    "id": "BQ-018",
+    "question": "List all equipment that has OISD-105 as a governing regulation.",
+    "category": "graph_traversal",
+    "requires_graph": true,
+    "doc_types_required": ["sop", "inspection_report"],
+    "expected_entities": ["OISD-105"]
+  },
+  {
+    "id": "BQ-019",
+    "question": "What failures share similar root causes across different equipment units?",
+    "category": "lessons_learned",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "incidents"],
+    "expected_entities": []
+  },
+  {
+    "id": "BQ-020",
+    "question": "What is the recommended maintenance schedule for centrifugal pumps based on historical failure patterns?",
+    "category": "cross_functional",
+    "requires_graph": true,
+    "doc_types_required": ["maintenance_log", "sop", "work_order"],
+    "expected_entities": ["centrifugal pump"]
+  }
+]

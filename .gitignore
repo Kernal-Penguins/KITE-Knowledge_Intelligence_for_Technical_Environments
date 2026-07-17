@@ -1,0 +1,70 @@
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# ── uv ────────────────────────────────────────────────
+.uv/
+uv.lock
+
+# ── Testing ───────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# ── Node / Frontend ───────────────────────────────────
+node_modules/
+dist/
+.next/
+out/
+.vercel/
+
+# ── Docker volumes ────────────────────────────────────
+neo4j_data/
+qdrant_data/
+postgres_data/
+
+# ── IDE ───────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── OS ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Documents (real industrial docs — never commit) ───
+backend/data/documents/maintenance_logs/*.pdf
+backend/data/documents/maintenance_logs/*.docx
+backend/data/documents/sops/*.pdf
+backend/data/documents/sops/*.docx
+backend/data/documents/inspection_reports/*.pdf
+backend/data/documents/inspection_reports/*.docx
+backend/data/documents/work_orders/*.pdf
+backend/data/documents/work_orders/*.docx
+backend/data/documents/work_orders/*.csv
+backend/data/documents/incidents/*.pdf
+backend/data/documents/incidents/*.docx
+backend/data/documents/pid_samples/*.png
+backend/data/documents/pid_samples/*.jpg
+backend/data/documents/pid_samples/*.pdf
+
+# ── Model cache ───────────────────────────────────────
+.cache/
+*.bin
+*.safetensors
