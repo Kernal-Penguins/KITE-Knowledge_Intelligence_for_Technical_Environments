@@ -77,7 +77,15 @@ class PostgresRepo:
     async def log_chat_message(query: str, answer: str, confidence: float) -> None:
         """Log a chat query and its generated response."""
         async with get_db_session() as db:
-            # Use the ORM-managed table; insert a bare record without chat_id FK
+            await db.execute(
+                text(
+                    """
+                    INSERT INTO chats (id, title, created_at)
+                    VALUES ('system', 'System Chat Log', now())
+                    ON CONFLICT (id) DO NOTHING
+                    """
+                )
+            )
             await db.execute(
                 text(
                     """
