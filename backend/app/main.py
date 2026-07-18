@@ -28,10 +28,23 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     """
     log.info("kite.startup", version=settings.APP_VERSION, env=settings.APP_ENV)
 
-    # Startup
-    await init_db()
-    await neo4j_client.connect()
-    await qdrant_client.connect()
+    # Startup — each service is connected independently.
+    # A failure here degrades the service but does NOT abort startup,
+    # so the /health endpoint can still report which services are unreachable.
+    try:
+        await init_db()
+    except Exception as exc:
+        log.error("kite.startup.postgres_failed", error=str(exc))
+
+    try:
+        await neo4j_client.connect()
+    except Exception as exc:
+        log.error("kite.startup.neo4j_failed", error=str(exc))
+
+    try:
+        await qdrant_client.connect()
+    except Exception as exc:
+        log.error("kite.startup.qdrant_failed", error=str(exc))
 
     log.info("kite.ready")
 
@@ -39,9 +52,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
 
     # Shutdown
     log.info("kite.shutdown")
-    await neo4j_client.close()
-    await qdrant_client.close()
-    await close_db()
+    try:
+        await neo4j_client.close()
+    except Exception:
+        pass
+    try:
+        await qdrant_client.close()
+    except Exception:
+        pass
+    try:
+        await close_db()
+    except Exception:
+        pass
     log.info("kite.stopped")
 
 
