@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     QDRANT_API_KEY: str     = ""
 
     # ── PostgreSQL ───────────────────────────────────────────
-    DATABASE_URL: str   = "postgresql+asyncpg://kite:kite_password@localhost:5432/kite"
+    DATABASE_URL: str   = "postgresql+asyncpg://postgres:kite_password@localhost:5432/kite"
 
     # ── Embedding & Reranking ────────────────────────────────
     EMBEDDING_MODEL: str    = "sentence-transformers/all-MiniLM-L6-v2"

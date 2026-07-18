@@ -134,6 +134,15 @@ class PostgresRepo:
             await db.execute(
                 text(
                     """
+                    INSERT INTO evaluation_runs (id, question_count, run_at)
+                    VALUES ('benchmark', 5, now())
+                    ON CONFLICT (id) DO NOTHING
+                    """
+                )
+            )
+            await db.execute(
+                text(
+                    """
                     INSERT INTO evaluation_results (id, run_id, question_id, question, answer,
                                                     metrics_json, response_ms, created_at)
                     VALUES (gen_random_uuid()::text,
