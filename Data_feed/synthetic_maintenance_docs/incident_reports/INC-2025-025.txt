@@ -1,0 +1,41 @@
+LESSONS-LEARNED REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2025-025
+Date Issued: 2025-12-05
+Prepared by: David Kim, Reliability
+Equipment Involved: AC-12 (Air Compressor 12), FN-33 (Cooling Tower Fan 33)
+
+Summary:
+Two separate rotating equipment bearing failures occurred within a
+three-month window in 2025 (AC-12 on 2025-06-11, FN-33 on 2025-08-22),
+both traced to the same root cause: an unapproved grease substitution
+(NLGI-1 in place of the specified NLGI-2 per SOP-AC-018) made during
+PMs when the correct grease grade was out of stock in stores.
+
+Pattern Identified:
+Neither substitution was logged as a deviation or flagged for
+follow-up re-lubrication at the time it occurred. Both failures
+presented identically - bearing overheating with visible grease
+breakdown/discoloration - despite occurring on different equipment
+types (compressor vs. fan) in different areas of the plant. This
+indicates a systemic gap in the substitution-approval process
+described in SOP-AC-018, not an equipment-specific issue.
+
+Contributing Factors:
+1. Stores stockout of NLGI-2 grease was not flagged to planning before
+   PMs were performed using substitute stock.
+2. No supervisor approval step was actually enforced at the time,
+   despite being documented policy.
+3. No cross-equipment visibility - the AC-12 failure in June was not
+   connected to the FN-33 failure in August until this review.
+
+Recommendations:
+1. Stores to alert maintenance planning proactively on any stockout of
+   SOP-AC-018 specified lubricants, not just react to work order
+   requests.
+2. Supervisor approval for grease substitutions to be enforced via a
+   sign-off field on the work order, not just written policy.
+3. Reliability team to review all rotating equipment PMs performed
+   during the stockout window for other undetected substitutions.
+
+Reported per SOP-INC-001.

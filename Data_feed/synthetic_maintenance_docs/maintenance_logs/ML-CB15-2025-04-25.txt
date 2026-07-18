@@ -1,0 +1,24 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: CB-15 (Conveyor Belt Drive 15, Raw Material Feed)
+Date: 2025-04-25
+Logged by: Maria Torres, Maintenance Supervisor
+
+Description:
+Operators reported unusual grinding noise from CB-15 drive motor during
+morning startup. Conveyor shut down for inspection before noise
+worsened.
+
+Findings:
+Drive motor bearing showing significant wear, some play detectable by
+hand. Bearing temp elevated (measured 185F vs normal ~140F) prior to
+shutdown. Lubrication records show last grease application was 5 months
+prior - interval exceeds the 3-month schedule in SOP-CB-005 for this
+duty cycle.
+
+Action Taken:
+Bearing replaced, drive motor regreased. WO-10202 opened. Flagged PM
+schedule gap to planning - lubrication interval appears to not be
+enforced consistently on this line.
+
+Status: Resolved (temporary)

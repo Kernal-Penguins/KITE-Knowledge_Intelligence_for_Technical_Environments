@@ -1,0 +1,26 @@
+WORK ORDER: WO-10218
+Facility: Cedar Point Processing Facility
+Equipment: AC-12 (Air Compressor 12)
+Type: Corrective Maintenance
+Opened: 2025-06-11  |  Closed: 2025-06-11
+Requested by: David Kim
+Assigned to: David Kim
+Related log: ML-AC12-2025-06-11
+
+Description of Work:
+Replace drive-end bearing following high-temp trip. Bearing found
+damaged from incorrect grease (NLGI-1 substitute used during prior PM
+due to stockout of specified NLGI-2 grade).
+
+Parts Used:
+- Drive-end bearing (PN 71144-D)
+- Grease, NLGI-2 (correct grade per SOP-AC-018)
+
+Labor: 4.0 hrs
+
+Notes:
+Flagged to stores/planning: grease grade substitutions during PMs need
+supervisor approval and should be logged. Same root cause suspected on
+other rotating equipment - see FN-33.
+
+Status: Closed

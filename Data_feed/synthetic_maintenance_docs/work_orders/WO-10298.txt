@@ -1,0 +1,27 @@
+WORK ORDER: WO-10298
+Facility: Cedar Point Processing Facility
+Equipment: P104 (Centrifugal Pump, Unit 3)
+Type: Corrective Maintenance - Root Cause Fix
+Opened: 2026-03-05  |  Closed: 2026-03-05
+Requested by: Sarah Chen
+Assigned to: James Whitfield
+Related log: ML-P104-2026-03-05
+
+Description of Work:
+Third mechanical seal replacement on P-104. This repair uses upgraded
+silicon carbide/silicon carbide seal faces (rated to 300F) rather than
+the standard carbon/ceramic set, addressing the root cause identified
+after two prior recurrences (WO-10201, WO-10214).
+
+Parts Used:
+- Mechanical seal kit, SiC/SiC, high-temp rated (expedited, PN 22841-HT)
+
+Labor: 4.5 hrs
+
+Notes:
+Intended as permanent corrective action. Recommend follow-up check at
+next two quarterly inspections (see IR-P104 series) to confirm no
+recurrence. SOP-MP-014 should be updated to specify high-temp seal
+option for pumps in elevated-temperature service.
+
+Status: Closed

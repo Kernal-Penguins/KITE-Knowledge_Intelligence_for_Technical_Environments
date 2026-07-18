@@ -1,0 +1,24 @@
+WORK ORDER: WO-10247
+Facility: Cedar Point Processing Facility
+Equipment: Control Valve 220
+Type: Corrective Maintenance
+Opened: 2025-11-14  |  Closed: 2025-11-14
+Requested by: R. Alvarez
+Assigned to: Robert Alvarez
+Related log: ML-CV220-2025-11-14
+
+Description of Work:
+Second positioner moisture-ingress failure following rain. Dried and
+reset positioner, replaced gasket again (temporary fix).
+
+Parts Used:
+- Positioner cover gasket (PN 55021-G)
+
+Labor: 2.0 hrs
+
+Notes:
+Recurring issue - 2nd occurrence this year, same root cause as May.
+Requesting NEMA 4X replacement enclosure be sourced and scheduled;
+gasket-only repairs are not resolving the underlying problem.
+
+Status: Closed - Follow-up part requested

@@ -1,0 +1,23 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: Control Valve 220
+Date: 2025-11-14
+Logged by: R. Alvarez
+
+Description:
+CV220 again failed to track setpoint following overnight rain, same
+symptom as May incident. Valve found stuck at partial open position.
+
+Findings:
+Moisture ingress into positioner again, gasket in poor condition. This
+is the second such failure this year, both following heavy rain events.
+Enclosure rating question raised in May was never resolved - positioner
+model installed is rated NEMA 3R, likely insufficient for direct
+outdoor exposure at this location.
+
+Action Taken:
+Dried and reset positioner, replaced gasket again. WO-10247 opened,
+flagged for reliability engineering review of positioner enclosure
+spec. This is a recurring issue - recommend upgrade to NEMA 4X housing.
+
+Status: Resolved (temporary) - Recurring issue, 2nd occurrence

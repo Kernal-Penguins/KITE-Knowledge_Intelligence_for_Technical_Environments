@@ -1,0 +1,24 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: CV-220 (Control Valve, Unit 2 Cooling Water Loop)
+Date: 2025-05-20
+Logged by: Robert Alvarez, Maintenance Technician
+
+Description:
+Valve failed to respond to control signal during heavy rain event
+overnight. Operations noted CV-220 stuck at ~40% open regardless of
+setpoint changes. Cooling water flow to Unit 2 was affected for approx
+45 minutes before technician arrived.
+
+Findings:
+Pneumatic positioner cover gasket appears degraded, allowing water
+ingress into positioner housing during heavy rain. Internal components
+showed corrosion/moisture damage.
+
+Action Taken:
+Positioner dried out, gasket replaced, valve function tested and
+confirmed normal. WO-10205 opened. Recommend checking positioner
+enclosure rating - may not be adequate for outdoor exposure at this
+location.
+
+Status: Resolved (temporary)

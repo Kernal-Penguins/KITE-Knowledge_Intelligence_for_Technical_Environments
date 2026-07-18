@@ -1,0 +1,24 @@
+WORK ORDER: WO-10202
+Facility: Cedar Point Processing Facility
+Equipment: CB-15 (Conveyor Belt Drive 15)
+Type: Corrective Maintenance
+Opened: 2025-04-25  |  Closed: 2025-04-25
+Requested by: Maria Torres
+Assigned to: Robert Alvarez
+Related log: ML-CB15-2025-04-25
+
+Description of Work:
+Replace worn drive motor bearing on CB-15, showing play and elevated
+temp. Regrease motor per SOP-CB-005 after replacement.
+
+Parts Used:
+- Drive motor bearing (PN 61103-B)
+- Grease, NLGI-2 (per SOP-AC-018)
+
+Labor: 3.0 hrs
+
+Notes:
+Lubrication interval gap identified - last greasing was 5 months prior
+vs. 3-month schedule. Flagged to planning.
+
+Status: Closed

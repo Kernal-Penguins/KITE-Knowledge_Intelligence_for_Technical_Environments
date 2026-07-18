@@ -1,0 +1,31 @@
+NEAR-MISS REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2025-019
+Date of Event: 2025-08-22
+Reported by: David Kim
+Equipment Involved: FN-33 (Cooling Tower Fan 33)
+
+Description:
+Operator on routine rounds noticed light smoke and an unusual odor
+near the FN-33 motor housing. Fan was stopped immediately and isolated
+before any fire or further damage occurred.
+
+Potential Consequence:
+Continued operation could have led to bearing seizure, motor winding
+damage, or in a worst case a localized fire. Prompt operator
+identification prevented escalation.
+
+Root Cause Discussion:
+Bearing overheating from grease breakdown, consistent with an
+incorrect grease substitution (same NLGI-1 substitute pattern found on
+AC-12 in June 2025). This confirms a plant-wide pattern rather than an
+isolated equipment issue - two separate rotating equipment items with
+the same root cause within a three-month window.
+
+Corrective Actions:
+1. Bearing replaced with correct grease grade (WO-10221).
+2. Escalated to reliability team for a lessons-learned review across
+   all rotating equipment PMs performed during the period grease
+   stockouts were occurring - see INC-2025-025.
+
+Reported per SOP-INC-001.

@@ -1,0 +1,31 @@
+INCIDENT REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2025-013
+Date of Event: 2025-06-11
+Reported by: David Kim
+Equipment Involved: AC-12 (Air Compressor 12)
+
+Description:
+AC-12 tripped on high bearing temperature alarm during normal
+operation, automatically shutting down. Backup compressor took over
+plant air load with no interruption to production. No injury.
+
+Potential Consequence:
+Had the backup compressor not been available or had a delayed
+response occurred, loss of plant air could have affected
+instrumentation and pneumatic valve operation plant-wide.
+
+Root Cause Discussion:
+Bearing overheating traced to incorrect grease (NLGI-1 substitute
+used during a prior PM due to stockout of the specified NLGI-2 grade
+per SOP-AC-018). Substitution was not logged or flagged for follow-up
+at the time it was made.
+
+Corrective Actions:
+1. Bearing replaced with correct grease grade (WO-10218).
+2. Flagged to stores/planning: grease substitutions require supervisor
+   approval and logging going forward.
+3. Similar pattern later identified on FN-33 (Aug 2025) - see lessons-
+   learned report INC-2025-025.
+
+Reported per SOP-INC-001.

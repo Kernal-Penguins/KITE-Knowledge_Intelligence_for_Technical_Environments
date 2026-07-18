@@ -1,0 +1,31 @@
+NEAR-MISS REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2025-011
+Date of Event: 2025-11-14
+Reported by: Robert Alvarez
+Equipment Involved: CV-220 (Control Valve, Unit 2)
+
+Description:
+CV-220 positioner failed following overnight rain, causing the valve
+to stick at partial open position. Cooling water flow to Unit 2 was
+reduced for approximately 50 minutes before the issue was identified
+and the valve was manually adjusted while repairs were made.
+
+Potential Consequence:
+Reduced cooling water flow for an extended period could have led to a
+process temperature excursion in Unit 2 if not caught promptly. This
+is the second such event this year (first was May 2025).
+
+Root Cause Discussion:
+Same root cause as the May 2025 event - moisture ingress into the
+NEMA 3R positioner enclosure, which is not rated for the valve's
+outdoor, rain-exposed mounting location. Gasket-only repairs have not
+resolved the underlying issue.
+
+Corrective Actions:
+1. Temporary gasket repair performed to restore service (WO-10247).
+2. NEMA 4X enclosure upgrade requested - this is now flagged as a
+   repeat near-miss and should be prioritized for the next available
+   outage window.
+
+Reported per SOP-INC-001.

@@ -1,0 +1,29 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: CB-15
+Inspection Date: 2026-02-18
+Inspector: Sarah Chen
+Inspection Type: Quarterly Mechanical Condition Check
+
+Scope:
+Belt tracking, drive motor bearing temp/vibration, guard condition,
+lubrication log review per SOP-CB-005.
+
+Findings:
+| Item                  | Result   | Notes                        |
+|-----------------------|----------|--------------------------------|
+| Belt tracking         | Pass     | Centered                       |
+| Drive bearing temp    | 156F     | Elevated, early wear indicator |
+| Drive bearing vibration| 0.15    | Slightly above baseline         |
+| Guarding              | Pass     | Intact                          |
+
+Result: PASS (with follow-up flagged)
+Next Due: 2026-05-18
+
+Comments:
+Bearing temp and vibration trending up compared to Jan 2025 baseline.
+This conveyor has had two prior bearing failures (Apr 2025, Oct 2025)
+tied to lubrication interval gaps. Recommend early follow-up rather
+than waiting for the full quarterly interval given the pattern.
+Follow-up did occur; bearing failed 2026-05-14 before scheduled
+recheck (see ML-CB15-2026-05-14).

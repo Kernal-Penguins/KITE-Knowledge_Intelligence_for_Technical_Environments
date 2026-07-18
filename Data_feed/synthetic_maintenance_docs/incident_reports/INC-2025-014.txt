@@ -1,0 +1,34 @@
+NEAR-MISS REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2025-014
+Date of Event: 2025-10-08
+Reported by: Maria Torres
+Equipment Involved: CB-15 (Conveyor Belt Drive 15)
+
+Description:
+During operation, CB-15 drive motor produced a loud grinding noise.
+Operator on the platform nearby stepped back and stopped the conveyor
+immediately via the local e-stop before any material jam or belt
+failure occurred. No injury, no equipment damage beyond the bearing
+itself.
+
+Potential Consequence:
+Had the bearing seized suddenly rather than giving audible warning, it
+could have caused a belt derailment or motor failure with personnel
+closer to the point of operation. The quick response by the operator
+prevented escalation.
+
+Root Cause Discussion:
+Second bearing failure on this conveyor in six months (see
+ML-CB15-2025-10-08). Lubrication PM had been skipped twice due to
+production scheduling conflicts, extending the actual grease interval
+well beyond the SOP-CB-005 standard.
+
+Corrective Actions:
+1. Bearing replaced same day (WO-10231).
+2. Supervisor sign-off requirement added to the PM schedule to prevent
+   further skips.
+3. Recommend reviewing e-stop accessibility on this platform as a
+   positive finding - operator response was effective.
+
+Reported per SOP-INC-001.

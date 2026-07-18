@@ -1,0 +1,26 @@
+WORK ORDER: WO-10312
+Facility: Cedar Point Processing Facility
+Equipment: CV-220
+Type: Corrective Maintenance (temporary) / Upgrade Pending
+Opened: 2026-06-09  |  Closed: 2026-06-09
+Requested by: James Whitfield
+Assigned to: James Whitfield
+Related log: ML-CV220-2026-06-09
+
+Description of Work:
+Third positioner moisture-ingress failure. Dried positioner and
+performed temporary gasket repair to restore service. NEMA 4X
+enclosure upgrade (requested per WO-10247) has not yet been received;
+scheduled for install at next planned outage.
+
+Parts Used:
+- Positioner cover gasket (PN 55021-G)
+
+Labor: 2.5 hrs
+
+Notes:
+Third occurrence of the same failure mode confirms root cause is
+enclosure rating, not installation. Permanent fix (NEMA 4X enclosure)
+tracked separately as pending capital/parts item.
+
+Status: Closed (temporary) - Permanent fix outstanding

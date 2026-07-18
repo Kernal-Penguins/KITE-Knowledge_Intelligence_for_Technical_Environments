@@ -1,0 +1,13 @@
+WORK ORDER: WO-10###
+Facility: Cedar Point Processing Facility
+Equipment:
+Type: [FIELD MISSING]
+Opened:    |  Closed:
+Requested by: <<NULL>>
+Assigned to:
+
+Description of Work:
+[[unrecoverable encoding error - original file appears to have been
+saved with mismatched character set, remaining content unreadable]]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

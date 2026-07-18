@@ -1,0 +1,23 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: AC-12 (Air Compressor 12)
+Inspection Date: 2025-01-15
+Inspector: David Kim
+Inspection Type: Quarterly Mechanical Condition Check
+
+Scope:
+Vibration, bearing temp, oil/grease condition check per SOP-AC-018.
+
+Findings:
+| Item                  | Result | Notes    |
+|-----------------------|--------|------------|
+| Vibration (ips)       | 0.10   | Normal      |
+| Bearing temp          | 140F   | Normal      |
+| Grease condition      | Pass   | Normal color and consistency |
+
+Result: PASS
+Next Due: 2025-04-15
+
+Comments:
+No issues found. Grease grade confirmed correct (NLGI-2) at time of
+inspection.

@@ -1,0 +1,24 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: AC-12 (Air Compressor 12, Plant Air System)
+Date: 2025-06-11
+Logged by: David Kim
+
+Description:
+AC-12 tripped on high bearing temperature alarm at 0940. Compressor
+automatically shut down; plant air backup compressor took over load.
+
+Findings:
+Drive-end bearing found overheated, grease sample showed signs of
+breakdown/discoloration inconsistent with the NLGI-2 grease specified.
+Records show maintenance crew used a general-purpose grease (NLGI-1,
+different base oil) from stores due to the specified grease being out
+of stock at time of last PM.
+
+Action Taken:
+Bearing replaced, correct grease grade applied per SOP-AC-018. WO-10218
+opened. Flagged to stores/planning that grease substitutions on
+rotating equipment PMs need supervisor approval - see also FN-33 log
+from August with same root cause.
+
+Status: Resolved

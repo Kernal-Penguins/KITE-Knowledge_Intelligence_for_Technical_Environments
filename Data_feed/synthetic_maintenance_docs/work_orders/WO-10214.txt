@@ -1,0 +1,25 @@
+WORK ORDER: WO-10214
+Facility: Cedar Point Processing Facility
+Equipment: Pump 104
+Type: Corrective Maintenance
+Opened: 2025-09-18  |  Closed: 2025-09-19
+Requested by: J. Whitfield
+Assigned to: James Whitfield
+Related log: ML-P104-2025-09-18
+
+Description of Work:
+Second mechanical seal replacement on P-104 in five months. Same
+procedure per SOP-MP-014. Like-for-like carbon/ceramic seal installed
+due to parts availability.
+
+Parts Used:
+- Mechanical seal kit, carbon/ceramic (standard stock item, PN 22841-C)
+
+Labor: 4.0 hrs
+
+Notes:
+Escalated to reliability engineering for review of seal material
+suitability - recurring failure, same wear pattern as April. Requested
+silicon carbide upgrade seal be evaluated and stocked.
+
+Status: Closed - Escalation pending

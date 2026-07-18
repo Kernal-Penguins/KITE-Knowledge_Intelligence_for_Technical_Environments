@@ -1,0 +1,19 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: Motor 501
+Date: 2025-09-16
+Logged by: R. Alvarez
+
+Description:
+Routine six-month PM performed on MTR-501, second half of 2025.
+
+Findings:
+All readings normal - vibration, bearing temp, insulation resistance
+all within spec, consistent with prior PM in March. No degradation
+trend observed.
+
+Action Taken:
+Standard PM lubrication performed, correct grease grade used and
+confirmed in stock. No issues to report.
+
+Status: Resolved - Satisfactory

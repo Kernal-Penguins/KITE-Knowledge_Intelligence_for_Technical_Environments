@@ -1,0 +1,25 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: CB-15 (Conveyor Belt Drive 15)
+Inspection Date: 2025-01-20
+Inspector: David Kim
+Inspection Type: Quarterly Mechanical Condition Check
+
+Scope:
+Belt tracking, drive motor bearing temp/vibration, guard condition per
+standard conveyor PM checklist.
+
+Findings:
+| Item                  | Result | Notes            |
+|-----------------------|--------|--------------------|
+| Belt tracking         | Pass   | Centered            |
+| Drive bearing temp    | 138F   | Normal              |
+| Drive bearing vibration| 0.09  | Normal              |
+| Guarding              | Pass   | Intact               |
+
+Result: PASS
+Next Due: 2025-04-20
+
+Comments:
+No issues found. Confirmed lubrication log up to date at time of
+inspection.

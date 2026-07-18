@@ -1,0 +1,24 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: Pump 104 (Unit 3 process water transfer)
+Date: 2025-09-18
+Logged by: J. Whitfield
+Shift: Day
+
+Description:
+Second seal leak on this unit since April. Same symptom - steady drip at
+seal housing, no unusual vibration. Isolated and pulled seal for inspection.
+
+Findings:
+Carbon face glazed/scored again, same pattern as April repair. Seal
+material and installation appear correct per SOP-MP-014, so failure mode
+looks tied to operating temperature rather than installation error.
+Confirmed with process team that Unit 3 discharge temp is still running
+above the pump's original design spec (~15-18F over).
+
+Action Taken:
+Like-for-like seal replacement again (no upgraded parts in stores).
+Escalated to reliability engineering for seal material upgrade
+(recommend silicon carbide faces rated for higher temp). WO-10214 opened.
+
+Status: Resolved (temporary) - Recurring issue, 2nd occurrence

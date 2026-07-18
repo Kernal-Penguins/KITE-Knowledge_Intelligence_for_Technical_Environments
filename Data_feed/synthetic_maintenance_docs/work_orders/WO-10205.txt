@@ -1,0 +1,24 @@
+WORK ORDER: WO-10205
+Facility: Cedar Point Processing Facility
+Equipment: CV-220 (Control Valve, Unit 2)
+Type: Corrective Maintenance
+Opened: 2025-05-20  |  Closed: 2025-05-20
+Requested by: Robert Alvarez
+Assigned to: Robert Alvarez
+Related log: ML-CV220-2025-05-20
+
+Description of Work:
+Positioner failed to respond following rain event. Positioner opened,
+dried out, cover gasket replaced. Function tested through full stroke,
+confirmed responsive to setpoint.
+
+Parts Used:
+- Positioner cover gasket (PN 55021-G)
+
+Labor: 2.0 hrs
+
+Notes:
+Suspect NEMA 3R enclosure rating is inadequate for this valve's
+outdoor, rain-exposed mounting location. Recommend review.
+
+Status: Closed

@@ -1,0 +1,26 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: P-104 (Centrifugal Pump, Unit 3 - Process Water Transfer)
+Date: 2025-04-12
+Logged by: James Whitfield, Senior Maintenance Technician
+Shift: Day
+
+Description:
+Operator reported visible leakage from mechanical seal area on P-104 during
+routine rounds (0630). Inspected pump on arrival; steady drip from seal
+housing, approx 1 drop/sec. No abnormal vibration or noise. Pump shut down
+and isolated per LOTO-002 at 0715 for seal inspection.
+
+Findings:
+Mechanical seal faces show scoring consistent with dry-running/heat damage.
+Carbon seal face appears glazed. Process fluid temp at this pump has been
+running ~15F above the original design basis since the Unit 3 upgrade last
+year - suspect seal material may not be rated for current service temp.
+
+Action Taken:
+Seal replaced in kind (standard carbon/ceramic set) from stores. Pump
+returned to service at 1130. Recommend engineering review seal material
+selection given elevated operating temp. Work order WO-10201 opened for
+tracking.
+
+Status: Resolved (temporary) - Follow-up recommended
