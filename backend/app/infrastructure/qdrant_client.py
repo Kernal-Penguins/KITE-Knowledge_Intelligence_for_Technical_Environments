@@ -49,6 +49,8 @@ class QdrantClientWrapper:
             log.info("qdrant.disconnected")
 
     async def ping(self) -> bool:
+        if not self._client:
+            return False
         try:
             await self._client.get_collections()
             return True

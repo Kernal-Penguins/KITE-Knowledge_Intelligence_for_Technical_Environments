@@ -59,6 +59,8 @@ class Neo4jClient:
 
     async def ping(self) -> bool:
         """Health check. Returns True if reachable."""
+        if not self._driver:
+            return False
         try:
             await self._driver.verify_connectivity()
             return True
