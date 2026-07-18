@@ -34,12 +34,19 @@ HELD_BACK_FILES = {
 }
 
 
+def safe_print(msg: str):
+    try:
+        print(msg, flush=True)
+    except UnicodeEncodeError:
+        print(msg.encode("ascii", "replace").decode("ascii"), flush=True)
+
+
 async def feed_documents(include_held_back: bool = True, include_corrupted: bool = True):
     """Feed synthetic documents into the system."""
     log.info("feed_data.started", path=str(DATA_FEED_DIR))
 
     if not DATA_FEED_DIR.exists():
-        print(f"Error: Data feed directory not found at {DATA_FEED_DIR}")
+        safe_print(f"Error: Data feed directory not found at {DATA_FEED_DIR}")
         return
 
     # Ensure infrastructure connections are initialized
@@ -62,7 +69,7 @@ async def feed_documents(include_held_back: bool = True, include_corrupted: bool
                         continue
                     file_paths.append(p)
 
-    print(f"Found {len(file_paths)} documents to ingest.")
+    safe_print(f"Found {len(file_paths)} documents to ingest.")
     success_count = 0
     fail_count = 0
 
@@ -72,7 +79,7 @@ async def feed_documents(include_held_back: bool = True, include_corrupted: bool
         doc_type = infer_doc_type(file_path.name)
 
         rel_path = file_path.relative_to(DATA_FEED_DIR)
-        print(f"[{i}/{len(file_paths)}] Ingesting {rel_path} ({doc_type.value})...")
+        safe_print(f"[{i}/{len(file_paths)}] Ingesting {rel_path} ({doc_type.value})...")
 
         # Copy to temp file so source dataset is preserved
         tmp_path = Path(tempfile.gettempdir()) / f"{job_id}_{file_path.name}"
@@ -92,18 +99,21 @@ async def feed_documents(include_held_back: bool = True, include_corrupted: bool
             upload = await postgres_repo.get_upload_by_job_id(job_id)
             if upload and upload.status == "complete":
                 success_count += 1
-                print(f"  -> SUCCESS ({upload.entities_extracted or 0} entities)")
+                safe_print(f"  -> SUCCESS ({upload.entities_extracted or 0} entities)")
             else:
                 fail_count += 1
                 err = upload.error_message if upload else "Unknown status"
-                print(f"  -> HANDLED ERROR/CORRUPT: {err}")
+                safe_print(f"  -> HANDLED ERROR/CORRUPT: {err}")
         except Exception as e:
             fail_count += 1
-            print(f"  -> ERROR: {str(e)}")
+            safe_print(f"  -> ERROR: {str(e)}")
 
-    print("\n" + "=" * 50)
-    print(f"Ingestion Complete! Total: {len(file_paths)} | Success: {success_count} | Handled Failures/Corrupted: {fail_count}")
-    print("=" * 50)
+        # Pace requests to respect Gemini Free Tier rate limits
+        await asyncio.sleep(6.0)
+
+    safe_print("\n" + "=" * 50)
+    safe_print(f"Ingestion Complete! Total: {len(file_paths)} | Success: {success_count} | Handled Failures/Corrupted: {fail_count}")
+    safe_print("=" * 50)
 
 
 if __name__ == "__main__":
