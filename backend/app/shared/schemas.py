@@ -12,8 +12,6 @@ These are the canonical data shapes used across all layers:
 LOCKED: Do not add fields without updating ontology.py and neo4j_repo.py.
 """
 import datetime
-import datetime
-from datetime import date
 
 from pydantic import BaseModel, Field
 
