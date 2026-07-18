@@ -100,6 +100,11 @@ def create_app() -> FastAPI:
     app.include_router(query_router, prefix="/api/v1")
     app.include_router(agents_router, prefix="/api/v1")
 
+    # Compatibility for /api without /v1
+    app.include_router(ingest_router, prefix="/api")
+    app.include_router(query_router, prefix="/api")
+    app.include_router(agents_router, prefix="/api")
+
     return app
 
 

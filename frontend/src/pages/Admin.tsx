@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { api } from '../api/client';
 
 const Admin = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -22,21 +23,16 @@ const Admin = () => {
     formData.append('file', file);
     
     try {
-      const res = await fetch('/api/ingest', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.detail || "Upload failed");
+      const res = await api.ingest(formData);
+      const data = res.data;
       
       setStatus('success');
       setMessage(`Job ID: ${data.job_id} is processing in the background.`);
       setFile(null);
     } catch (err: any) {
       setStatus('error');
-      setMessage(err.message);
+      const errorMsg = err.response?.data?.detail || err.message || "Upload failed";
+      setMessage(errorMsg);
     }
   };
 
