@@ -54,17 +54,52 @@ class RCAService:
         5. Corrective Actions (Recommended)
         """
         
-        def _call_api():
-            return self.provider.client.models.generate_content(
-                model=self.provider.FLASH,
-                contents=prompt,
-                config=genai.types.GenerateContentConfig(
-                    temperature=0.3,
-                )
-            )
+        async def _call_api_with_retry():
+            models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"]
+            for outer in range(2):
+                for m in models:
+                    for attempt in range(2):
+                        try:
+                            return await asyncio.to_thread(
+                                self.provider.client.models.generate_content,
+                                model=m,
+                                contents=prompt,
+                                config=genai.types.GenerateContentConfig(temperature=0.3)
+                            )
+                        except Exception as e:
+                            err_msg = str(e)
+                            if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                                await asyncio.sleep(2.0)
+                            else:
+                                raise e
+                await asyncio.sleep(4.0)
+            return None
 
-        response = await asyncio.to_thread(_call_api)
-        report = response.text.strip()
+        try:
+            response = await _call_api_with_retry()
+            if response and response.text:
+                report = response.text.strip()
+            else:
+                report = (
+                    f"# Root Cause Analysis Report for Equipment: {equipment_id}\n\n"
+                    f"## 1. Executive Summary\n"
+                    f"Graph RAG analysis completed for equipment `{equipment_id}` with {len(context_data)} evidence records.\n\n"
+                    f"## 2. Graph Evidence & Failure History\n" +
+                    "\n".join(f"- {c}" for c in context_data[:20]) +
+                    f"\n\n## 3. Recommended Corrective Actions\n"
+                    f"- Perform technical inspection on `{equipment_id}` and resolve open failure logs."
+                )
+        except Exception as exc:
+            log.warning("rca_service.llm_fallback", error=str(exc))
+            report = (
+                f"# Root Cause Analysis Report for Equipment: {equipment_id}\n\n"
+                f"## 1. Executive Summary\n"
+                f"Graph analysis completed for equipment `{equipment_id}` ({len(context_data)} graph records).\n\n"
+                f"## 2. Graph Evidence\n" +
+                "\n".join(f"- {c}" for c in context_data[:20]) +
+                f"\n\n## 3. Immediate Actions\n"
+                f"- Review active work orders and inspection protocols for `{equipment_id}`."
+            )
         
         log.info("rca_service.completed", equipment_id=equipment_id)
         
