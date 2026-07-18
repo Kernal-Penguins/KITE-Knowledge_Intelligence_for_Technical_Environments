@@ -26,10 +26,16 @@ class QdrantRepo:
     async def search(query_vector: list[float], limit: int = 5) -> list[ScoredPoint]:
         """Search for the most similar chunks."""
         client = qdrant_client.client
-        return await client.search(
-            collection_name=QDRANT_COLLECTION_NAME,
-            query_vector=query_vector,
-            limit=limit,
-        )
+        try:
+            from qdrant_client.http.models import SearchRequest
+            res = await client.http.search_api.search_points(
+                collection_name=QDRANT_COLLECTION_NAME,
+                search_request=SearchRequest(vector=query_vector, limit=limit, with_payload=True),
+            )
+            return res.result
+        except Exception as e:
+            from app.infrastructure.logger import log
+            log.warning("qdrant_repo.search_failed", error=str(e))
+            return []
 
 qdrant_repo = QdrantRepo()
