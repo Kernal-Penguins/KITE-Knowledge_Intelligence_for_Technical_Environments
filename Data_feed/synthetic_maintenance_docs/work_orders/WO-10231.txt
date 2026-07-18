@@ -1,0 +1,25 @@
+WORK ORDER: WO-10231
+Facility: Cedar Point Processing Facility
+Equipment: Conveyor 15
+Type: Corrective Maintenance
+Opened: 2025-10-08  |  Closed: 2025-10-08
+Requested by: Maria Torres
+Assigned to: Robert Alvarez
+Related log: ML-CB15-2025-10-08
+
+Description of Work:
+Second drive motor bearing replacement on CB-15 in six months. Same
+failure mode as April. Bearing replaced, motor regreased.
+
+Parts Used:
+- Drive motor bearing (PN 61103-B)
+- Grease, NLGI-2
+
+Labor: 3.0 hrs
+
+Notes:
+PM lubrication work order for this line was skipped twice due to
+production conflicts. Added supervisor sign-off requirement to PM
+schedule to prevent skips going forward. Related near-miss: INC-2025-014.
+
+Status: Closed

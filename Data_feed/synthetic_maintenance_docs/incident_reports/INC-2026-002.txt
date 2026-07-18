@@ -1,0 +1,35 @@
+NEAR-MISS REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2026-002
+Date of Event: 2026-02-10
+Reported by: Lisa Nguyen
+Equipment Involved: TK-301 (Storage Tank 301)
+
+Description:
+During a routine fill operation, the level gauge on TK-301 was noted
+by the operator to be reading inconsistently with the delivered
+volume, requiring a manual dip check to confirm actual level before
+continuing the fill. No overfill occurred; fill was paused until the
+discrepancy was resolved manually.
+
+Potential Consequence:
+An uncorrected level gauge discrepancy during a fill operation could
+lead to an overfill event and product loss/environmental release if
+not caught by manual verification.
+
+Root Cause Discussion:
+TK-301's formal annual inspection (which includes level gauge
+calibration verification per SOP-TK-011) has been overdue since
+2025-01-15 (see IR-TK301-2024-01 and ML-TK301-2025-08-30). While a
+direct causal link to this specific gauge discrepancy cannot be
+confirmed without the overdue inspection, the timing raises the
+possibility that a calibration drift issue would have been caught
+earlier had the inspection been completed on schedule.
+
+Corrective Actions:
+1. Manual dip checks to continue for all TK-301 fills until formal
+   inspection is completed.
+2. Overdue inspection escalated to EHS lead as a priority scheduling
+   item given this near-miss.
+
+Reported per SOP-INC-001.

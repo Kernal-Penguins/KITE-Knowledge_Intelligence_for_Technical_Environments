@@ -1,0 +1,25 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: Belt Drive CB-15
+Date: 2026-05-14
+Logged by: Robert Alvarez
+
+Description:
+Third drive motor bearing failure on CB-15. Caught during scheduled
+inspection (see IR-CB15-2026-02) which had flagged early bearing wear
+signs; failure occurred before the recommended follow-up interval.
+
+Findings:
+Root cause confirmed as inadequate lubrication interval for this duty
+cycle - the 3-month schedule in SOP-CB-005 was written for standard
+duty but CB-15 runs at high utilization (>20 hrs/day). Two prior
+repairs (Apr 2025, Oct 2025) treated the symptom, not the schedule
+mismatch.
+
+Action Taken:
+Bearing replaced. WO-10305 opened. PM schedule for CB-15 permanently
+revised to 6-week lubrication interval, tracked separately from the
+standard SOP-CB-005 schedule until the SOP itself is updated for
+high-duty conveyors.
+
+Status: Resolved - Root cause addressed via schedule change (3rd occurrence)

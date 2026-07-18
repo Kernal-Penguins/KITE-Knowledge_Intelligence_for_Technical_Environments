@@ -1,0 +1,27 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: GEN-04 (Emergency Diesel Generator 4)
+Inspection Date: 2026-06-16
+Inspector: Tom Baxter
+Inspection Type: Annual Load-Bank Test and Certification (per SOP-GEN-030)
+
+Scope:
+Load-bank test at 50%, 75%, and 100% rated load for 30 minutes each
+step; transfer switch operation check; fuel/oil/coolant system check.
+
+Findings:
+| Item                  | Result | Notes                        |
+|-----------------------|--------|--------------------------------|
+| 50% load step         | Pass   | Stable, no alarms                |
+| 75% load step         | Pass   | Stable, no alarms                |
+| 100% load step        | Pass   | Stable, no alarms                |
+| Transfer switch        | Pass   | Transferred within spec time      |
+
+Result: PASS (technical) - Certification sign-off PENDING
+
+Comments:
+All test steps passed. However, the certification sign-off from the
+facility EHS manager, required to close out this annual certification
+per SOP-GEN-030 Section 4, has not yet been completed as of this
+report's filing. Test data is complete and on file; administrative
+sign-off is outstanding.

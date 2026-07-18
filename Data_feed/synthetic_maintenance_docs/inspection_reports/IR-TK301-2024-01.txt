@@ -1,0 +1,25 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: TK-301 (Storage Tank 301)
+Inspection Date: 2024-01-15
+Inspector: Lisa Nguyen
+Inspection Type: Annual Tank Integrity Inspection (per SOP-TK-011)
+
+Scope:
+External shell visual inspection, foundation check, fittings/valves
+check, level gauge calibration check.
+
+Findings:
+| Item                  | Result | Notes            |
+|-----------------------|--------|--------------------|
+| Shell condition        | Pass   | No visible corrosion|
+| Foundation             | Pass   | No settling observed|
+| Fittings/valves        | Pass   | No leaks             |
+| Level gauge calibration| Pass   | Within tolerance     |
+
+Result: PASS
+Next Due: 2025-01-15
+
+Comments:
+Tank in good condition. Standard annual inspection interval applies
+per SOP-TK-011.

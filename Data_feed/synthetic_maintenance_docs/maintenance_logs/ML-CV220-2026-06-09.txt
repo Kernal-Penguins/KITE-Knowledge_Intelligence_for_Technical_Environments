@@ -1,0 +1,23 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: CV-220
+Date: 2026-06-09
+Logged by: James Whitfield
+
+Description:
+Third positioner failure on CV-220 following heavy rain, consistent
+with prior two occurrences (May 2025, Nov 2025). Valve stuck at ~35%
+open, cooling water flow reduced to Unit 2.
+
+Findings:
+Confirmed root cause: NEMA 3R positioner enclosure is not adequate for
+this valve's outdoor, rain-exposed location. Two prior temporary
+repairs (gasket replacement) did not address underlying issue.
+
+Action Taken:
+Isolated and dried positioner, temporary gasket repair performed to
+restore service. Requested NEMA 4X replacement enclosure be expedited
+per recommendation logged in Nov 2025 - see WO-10247 and WO-10312.
+This is the permanent fix scheduled for next outage window.
+
+Status: Resolved (temporary) - Permanent fix pending parts, 3rd occurrence

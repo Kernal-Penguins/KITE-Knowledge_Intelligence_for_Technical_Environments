@@ -1,0 +1,27 @@
+WORK ORDER: WO-10305
+Facility: Cedar Point Processing Facility
+Equipment: Belt Drive CB-15
+Type: Corrective Maintenance - Root Cause Fix
+Opened: 2026-05-14  |  Closed: 2026-05-14
+Requested by: Robert Alvarez
+Assigned to: Robert Alvarez
+Related log: ML-CB15-2026-05-14
+
+Description of Work:
+Third drive motor bearing replacement on CB-15. Following this repair,
+PM lubrication schedule for this specific conveyor changed from
+3-month (standard SOP-CB-005 interval) to 6-week interval to match
+its high-duty-cycle usage (>20 hrs/day).
+
+Parts Used:
+- Drive motor bearing (PN 61103-B)
+- Grease, NLGI-2
+
+Labor: 3.0 hrs
+
+Notes:
+Root cause: standard SOP-CB-005 lubrication interval does not account
+for high-utilization conveyors. Recommend SOP revision for equipment
+running above ~15 hrs/day duty cycle.
+
+Status: Closed - Root cause addressed

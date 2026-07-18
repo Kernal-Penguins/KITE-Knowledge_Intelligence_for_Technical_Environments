@@ -1,0 +1,23 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: TK-301 (Storage Tank 301, Raw Material Storage)
+Date: 2025-08-30
+Logged by: Lisa Nguyen, EHS Coordinator
+
+Description:
+Routine visual walkdown of tank farm, TK-301 included. No active leaks
+or defects observed externally. Noted during review that TK-301's
+formal inspection (per SOP-TK-011) was due 2025-01-15 and has not yet
+been completed as of this walkdown.
+
+Findings:
+No immediate safety concern observed visually, but formal inspection
+is overdue by over 7 months. Last documented inspection was 2024-01-15
+(see IR-TK301-2024-01).
+
+Action Taken:
+Flagged to maintenance planning and EHS lead for scheduling. This entry
+is for tracking purposes; a full inspection per SOP-TK-011 should be
+scheduled as soon as possible.
+
+Status: Open - Inspection scheduling required

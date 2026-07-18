@@ -1,0 +1,28 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: P104 (Centrifugal Pump, Unit 3)
+Inspection Date: 2025-12-10
+Inspector: Sarah Chen
+Inspection Type: Quarterly Mechanical Condition Check
+
+Scope:
+Visual inspection, vibration reading, seal condition check per standard
+pump PM checklist.
+
+Findings:
+| Item                  | Result       | Notes                          |
+|-----------------------|--------------|----------------------------------|
+| Vibration (ips)       | 0.13         | Within normal range              |
+| Seal housing          | Dry, no leak | No visible weep at this time     |
+| Coupling alignment    | Pass         | Within tolerance                  |
+| Bearing temp          | 145F         | Normal                            |
+
+Result: PASS (with note)
+Next Due: 2026-03-10
+
+Comments:
+Seal currently not leaking, but this is the same seal type that failed
+twice in 2025 (April, September - see ML-P104-2025-04-12 and
+ML-P104-2025-09-18). Reliability review of seal material vs. operating
+temperature was recommended after the September failure and is still
+outstanding. Recommend expediting that review before next failure.

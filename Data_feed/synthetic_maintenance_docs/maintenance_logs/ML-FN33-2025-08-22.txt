@@ -1,0 +1,24 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: FN-33 (Cooling Tower Fan 33)
+Date: 2025-08-22
+Logged by: David Kim
+
+Description:
+Operator reported light smoke/odor near FN-33 motor housing. Fan
+stopped immediately, isolated for inspection. See INC-2025-019 for
+near-miss reporting.
+
+Findings:
+Bearing overheating, similar grease degradation pattern to AC-12
+(June 2025). Confirmed same substitute grease (NLGI-1, wrong base oil)
+was used on FN-33's last PM - same stores stockout issue.
+
+Action Taken:
+Bearing replaced, correct NLGI-2 grease applied. WO-10221 opened.
+Combined with AC-12 finding, this confirms a plant-wide issue: grease
+substitutions during stockouts are not being tracked or flagged across
+multiple rotating equipment PMs. Recommend reliability review - see
+lessons-learned report INC-2025-025.
+
+Status: Resolved

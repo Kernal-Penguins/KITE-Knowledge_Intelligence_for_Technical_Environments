@@ -1,0 +1,25 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: CV-220 (Control Valve, Unit 2)
+Inspection Date: 2025-02-11
+Inspector: David Kim
+Inspection Type: Semi-Annual Valve/Positioner Check
+
+Scope:
+Stroke test, positioner calibration check, enclosure/gasket visual
+inspection per SOP-CV-022.
+
+Findings:
+| Item                  | Result | Notes                       |
+|-----------------------|--------|-------------------------------|
+| Stroke test (0-100%)  | Pass   | Full travel, no hysteresis    |
+| Positioner calibration| Pass   | Within 1% of setpoint          |
+| Enclosure condition   | Fair   | Minor gasket wear noted        |
+
+Result: PASS
+Next Due: 2025-08-11
+
+Comments:
+Gasket showing early wear; not yet a leak point. Given outdoor mounting
+location, recommend keeping an eye on enclosure seal integrity going
+into rainy season.

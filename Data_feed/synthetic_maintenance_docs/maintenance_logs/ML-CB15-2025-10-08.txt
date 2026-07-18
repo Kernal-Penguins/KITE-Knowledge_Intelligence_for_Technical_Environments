@@ -1,0 +1,23 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: Conveyor 15
+Date: 2025-10-08
+Logged by: Maria Torres
+
+Description:
+Second bearing failure on CB-15 drive motor since April repair. Same
+grinding noise pattern reported by operators, caught before failure
+this time. Near-miss occurred during shutdown - see INC-2025-014.
+
+Findings:
+Bearing again shows wear consistent with under-lubrication. Checked
+grease log: interval was still not being followed despite April
+flag - last greasing was 4 months prior, PM work order was skipped
+twice due to production schedule conflicts.
+
+Action Taken:
+Bearing replaced, motor regreased, PM work order re-scheduled with
+supervisor sign-off requirement added. WO-10231 opened. Escalating to
+plant reliability meeting - this is now a repeat failure.
+
+Status: Resolved (temporary) - Recurring issue, 2nd occurrence

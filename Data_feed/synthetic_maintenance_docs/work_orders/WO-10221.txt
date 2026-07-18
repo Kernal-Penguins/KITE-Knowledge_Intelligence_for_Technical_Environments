@@ -1,0 +1,27 @@
+WORK ORDER: WO-10221
+Facility: Cedar Point Processing Facility
+Equipment: FN-33 (Cooling Tower Fan 33)
+Type: Corrective Maintenance
+Opened: 2025-08-22  |  Closed: 2025-08-22
+Requested by: David Kim
+Assigned to: David Kim
+Related log: ML-FN33-2025-08-22
+
+Description of Work:
+Replace bearing following smoke/odor report and shutdown. Bearing
+damage consistent with grease breakdown - same substitute NLGI-1
+grease used on last PM as was found on AC-12 in June.
+
+Parts Used:
+- Fan bearing assembly (PN 71098-F)
+- Grease, NLGI-2 (correct grade per SOP-AC-018)
+
+Labor: 3.5 hrs
+
+Notes:
+This is the second rotating-equipment bearing failure this year traced
+to the same incorrect-grease root cause (see WO-10218, AC-12). Raised
+to reliability team as a pattern, not an isolated event - see
+lessons-learned report INC-2025-025.
+
+Status: Closed

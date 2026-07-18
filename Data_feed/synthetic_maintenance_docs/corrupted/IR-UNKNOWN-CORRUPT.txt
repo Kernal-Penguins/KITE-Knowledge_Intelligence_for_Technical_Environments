@@ -1,0 +1,15 @@
+INSPECTION REPORT
+Facility:
+Equipment: ��� (illegible)
+Inspection Date: 0000-00-00
+Inspector:
+
+Findings:
+| Item | Result | Notes |
+|------|--------|-------|
+| ????? | ###### | <corrupted table - column count mismatch, 2 of 4 rows unparseable>
+
+Result:
+Next Due:
+
+[file truncated - remaining 1,204 bytes failed CRC check on import]

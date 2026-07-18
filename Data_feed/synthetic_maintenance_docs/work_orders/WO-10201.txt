@@ -1,0 +1,25 @@
+WORK ORDER: WO-10201
+Facility: Cedar Point Processing Facility
+Equipment: P-104 (Centrifugal Pump, Unit 3)
+Type: Corrective Maintenance
+Opened: 2025-04-12  |  Closed: 2025-04-12
+Requested by: James Whitfield
+Assigned to: James Whitfield
+Related log: ML-P104-2025-04-12
+
+Description of Work:
+Replace mechanical seal on P-104 following observed leakage at seal
+housing. Isolate pump per SOP-LOTO-002, drain casing, remove seal
+assembly, inspect shaft sleeve, install new seal per SOP-MP-014.
+
+Parts Used:
+- Mechanical seal kit, carbon/ceramic (standard stock item, PN 22841-C)
+
+Labor: 3.5 hrs
+
+Notes:
+Seal faces showed heat-related scoring. Recommend engineering review
+of seal material rating vs. current process temperature - pump has run
+hotter than design basis since Unit 3 upgrade.
+
+Status: Closed

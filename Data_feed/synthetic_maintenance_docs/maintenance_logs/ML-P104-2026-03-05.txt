@@ -1,0 +1,25 @@
+MAINTENANCE LOG ENTRY
+Facility: Cedar Point Processing Facility
+Equipment: P104 (Centrifugal Pump, Unit 3)
+Date: 2026-03-05
+Logged by: James Whitfield
+
+Description:
+Third mechanical seal failure on this pump within 12 months. Leak detected
+during Sarah Chen's walkdown inspection this morning; pump isolated
+immediately given prior history and proximity to walkway.
+
+Findings:
+Same glazing/scoring pattern on carbon face as prior two failures. This
+confirms the root cause is thermal - standard carbon/ceramic seal is not
+adequate for current discharge temperature on Unit 3. Reliability
+engineering review (requested Sept 2025) was never completed.
+
+Action Taken:
+Replaced with upgraded silicon carbide/silicon carbide seal faces rated
+to 300F (vs. prior 220F rating) - parts expedited from vendor. Pump
+returned to service 2026-03-05 1600. This is intended as the permanent
+fix per WO-10298. Will monitor over next 2 quarterly inspections to
+confirm resolution.
+
+Status: Resolved - Root cause addressed (see WO-10298)

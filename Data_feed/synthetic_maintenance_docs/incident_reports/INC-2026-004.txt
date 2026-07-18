@@ -1,0 +1,33 @@
+NEAR-MISS REPORT
+Facility: Cedar Point Processing Facility
+Report #: INC-2026-004
+Date of Event: 2026-03-05
+Reported by: Sarah Chen
+Equipment Involved: P-104 (Centrifugal Pump, Unit 3)
+
+Description:
+During walkdown inspection, mechanical seal leak was observed on P-104
+(third occurrence of this failure mode - see ML-P104-2026-03-05).
+Small amount of process water pooled near the pump base before
+isolation. No injury occurred; minor slip hazard was identified and
+addressed by wiping down the area immediately.
+
+Potential Consequence:
+If unaddressed, continued leakage could have created a larger slip
+hazard in a walkway area, or led to a larger loss of containment if
+the seal failed catastrophically rather than gradually.
+
+Root Cause Discussion:
+This is the third seal failure on P-104 within 12 months, all with the
+same thermal root cause (seal material not rated for current operating
+temperature). Prior two occurrences were treated as isolated repairs;
+this event prompted the permanent fix (upgraded SiC/SiC seal, see
+WO-10298) rather than another like-for-like replacement.
+
+Corrective Actions:
+1. Permanent seal upgrade completed same day (WO-10298).
+2. Recommend SOP-MP-014 be updated to specify high-temp seal option
+   explicitly for pumps in elevated-temperature service, to prevent
+   recurrence on similar equipment.
+
+Reported per SOP-INC-001.

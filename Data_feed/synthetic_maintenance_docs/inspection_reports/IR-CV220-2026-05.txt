@@ -1,0 +1,26 @@
+INSPECTION REPORT
+Facility: Cedar Point Processing Facility
+Equipment: CV220
+Inspection Date: 2026-05-04
+Inspector: Sarah Chen
+Inspection Type: Semi-Annual Valve/Positioner Check
+
+Scope:
+Stroke test, positioner calibration check, enclosure/gasket visual
+inspection per SOP-CV-022.
+
+Findings:
+| Item                  | Result | Notes                              |
+|-----------------------|--------|--------------------------------------|
+| Stroke test (0-100%)  | Pass   | Full travel confirmed                |
+| Positioner calibration| Pass   | Within 1% of setpoint                 |
+| Enclosure condition   | Fair   | NEMA 3R rating flagged as inadequate  |
+
+Result: PASS (with note)
+Next Due: 2026-11-04
+
+Comments:
+Valve is functioning correctly today, but this positioner has failed
+twice due to moisture ingress (May 2025, Nov 2025). NEMA 4X enclosure
+upgrade was requested after the Nov 2025 failure and has not yet been
+installed. Recommend expediting before next rainy season.
