@@ -13,8 +13,9 @@ from app.shared.schemas import ExtractionResult
 class ResolutionService:
     def __init__(self):
         self.provider = GeminiProvider()
-        self.HIGH_CONFIDENCE_THRESHOLD = 90.0
-        self.LLM_ADJUDICATION_THRESHOLD = 75.0
+        # fuzz.ratio() returns an integer 0–100 (NOT 0–1)
+        self.HIGH_CONFIDENCE_THRESHOLD = 90   # auto-merge above this score
+        self.LLM_ADJUDICATION_THRESHOLD = 75  # ask LLM to adjudicate in this range
 
     async def resolve_entities(self, result: ExtractionResult) -> ExtractionResult:
         log.info("resolution_service.started", doc_id=result.doc_id)
@@ -33,11 +34,22 @@ class ResolutionService:
                     log.info("resolution_service.auto_merged", a=existing.tag_id, b=eq.tag_id, score=score)
                     break
                 elif score >= self.LLM_ADJUDICATION_THRESHOLD:
-                    decision = await self.provider.adjudicate_entities(
-                        candidate_a=existing.tag_id,
-                        candidate_b=eq.tag_id,
-                        context=f"Equipment Type: {eq.type}"
-                    )
+                    try:
+                        decision = await self.provider.adjudicate_entities(
+                            candidate_a=existing.tag_id,
+                            candidate_b=eq.tag_id,
+                            context=f"Equipment Type: {eq.type}"
+                        )
+                    except Exception as llm_exc:
+                        log.warning(
+                            "resolution_service.llm_adjudication_failed",
+                            a=existing.tag_id,
+                            b=eq.tag_id,
+                            error=str(llm_exc),
+                        )
+                        # If LLM call fails, treat as different to be safe
+                        decision = "DIFFERENT"
+
                     if decision != "DIFFERENT":
                         if eq.tag_id not in existing.aliases and eq.tag_id != decision:
                             existing.aliases.append(eq.tag_id)
