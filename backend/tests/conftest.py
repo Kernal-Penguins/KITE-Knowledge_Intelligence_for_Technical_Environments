@@ -25,6 +25,8 @@ _HEAVY_MODULES = [
     "FlagEmbedding",
     "torch",
     "transformers",
+    "google.generativeai",
+    "google.genai",
 ]
 
 for _mod in _HEAVY_MODULES:

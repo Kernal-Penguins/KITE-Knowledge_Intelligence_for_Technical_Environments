@@ -86,3 +86,44 @@ export interface ComplianceReviewResponse {
   flag_hash: string;
   new_status: string;
 }
+
+export interface UploadRecord {
+  job_id: string;
+  doc_id: string;
+  filename: string;
+  doc_type: string;
+  status: string;
+  pipeline_stage: string | null;
+  error_message: string | null;
+  created_at: string | null;
+  completed_at: string | null;
+}
+
+export interface GraphExplorerNode {
+  id: string;
+  label: string;
+  properties: Record<string, string>;
+  node_type: string;
+}
+
+export interface GraphExplorerEdge {
+  source: string;
+  target: string;
+  rel_type: string;
+}
+
+export interface GraphExplorerResponse {
+  nodes: GraphExplorerNode[];
+  edges: GraphExplorerEdge[];
+  total_nodes: number;
+  total_edges: number;
+}
+
+export interface ReviewQueueItem {
+  id: string;
+  entity_a: string;
+  entity_b: string;
+  entity_type: string;
+  confidence: number;
+  source: string;
+}

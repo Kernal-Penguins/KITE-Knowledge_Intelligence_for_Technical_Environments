@@ -23,8 +23,7 @@ export default function CompliancePage() {
       <div>
         <h1 className="text-xl font-medium text-white">Compliance</h1>
         <p className="text-sm text-white/45">
-          Runs 5 deterministic Cypher audit rules against the graph --{" "}
-          <code className="text-white/70">GET /api/v1/agents/compliance</code>.
+          Runs deterministic audit rules against your knowledge graph to surface compliance gaps.
         </p>
       </div>
 
@@ -37,7 +36,7 @@ export default function CompliancePage() {
       {isError && (
         <div className="flex items-center gap-2 rounded-lg bg-[#E08A3C]/10 px-4 py-3 text-sm text-[#E08A3C] ring-1 ring-[#E08A3C]/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          Audit failed: {error instanceof Error ? error.message : "unknown error"}
+          Audit failed. Please try again shortly.
         </div>
       )}
 

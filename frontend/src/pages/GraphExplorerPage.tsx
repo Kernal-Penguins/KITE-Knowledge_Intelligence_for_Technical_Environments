@@ -1,110 +1,84 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle, Share2 } from "lucide-react";
 import ReactFlow, { Background, Controls, MiniMap, type Edge, type Node } from "reactflow";
 import "reactflow/dist/style.css";
-import { equipment, documents, relationships, type EquipmentStatus } from "../data/mockData";
+import { useGraphData } from "../hooks/useKiteApi";
 
-const statusFill: Record<EquipmentStatus, string> = {
-  Operational: "rgba(40,200,64,0.14)",
-  Warning: "rgba(254,188,46,0.16)",
-  Failed: "rgba(224,138,60,0.18)",
+const NODE_COLORS: Record<string, { bg: string; border: string }> = {
+  Equipment: { bg: "rgba(40,200,64,0.14)", border: "#28c840" },
+  Failure: { bg: "rgba(224,138,60,0.18)", border: "#E08A3C" },
+  Procedure: { bg: "rgba(79,209,197,0.08)", border: "#4FD1C5" },
+  Person: { bg: "rgba(254,188,46,0.16)", border: "#febc2e" },
+  Inspection: { bg: "rgba(147,130,255,0.12)", border: "#9382FF" },
+  Regulation: { bg: "rgba(180,180,180,0.1)", border: "#8A95A3" },
 };
 
-const statusBorder: Record<EquipmentStatus, string> = {
-  Operational: "#28c840",
-  Warning: "#febc2e",
-  Failed: "#E08A3C",
-};
-
-const equipmentPositions: Record<string, { x: number; y: number }> = {
-  "eq-p101": { x: 260, y: 60 },
-  "eq-v205": { x: 520, y: 60 },
-  "eq-tk04": { x: 780, y: 60 },
-  "eq-hx310": { x: 80, y: 240 },
-  "eq-mot118": { x: 400, y: 260 },
-};
-
-const documentPositions: Record<string, { x: number; y: number }> = {
-  "doc-1": { x: 100, y: 440 },
-  "doc-2": { x: 520, y: 440 },
-  "doc-3": { x: 780, y: 440 },
-  "doc-4": { x: 0, y: 580 },
-  "doc-5": { x: 400, y: 580 },
-};
-
-export default function GraphExplorerPage() {
-  const [showDocuments, setShowDocuments] = useState(true);
-
-  const nodes: Node[] = useMemo(() => {
-    const eqNodes: Node[] = equipment.map((e) => ({
-      id: e.id,
-      position: equipmentPositions[e.id],
-      data: { label: `${e.tag}\n${e.type}` },
+function layoutNodes(rawNodes: { id: string; label: string; node_type: string }[]): Node[] {
+  const cols = Math.max(1, Math.ceil(Math.sqrt(rawNodes.length)));
+  return rawNodes.map((n, i) => {
+    const colors = NODE_COLORS[n.node_type] ?? { bg: "rgba(255,255,255,0.06)", border: "#3A4552" };
+    return {
+      id: n.id,
+      position: { x: (i % cols) * 200, y: Math.floor(i / cols) * 130 },
+      data: { label: `${n.label}\n${n.node_type}` },
       style: {
-        background: statusFill[e.status],
-        border: `1px solid ${statusBorder[e.status]}`,
+        background: colors.bg,
+        border: `1px solid ${colors.border}`,
         borderRadius: 10,
         color: "#E7ECF2",
         fontSize: 11,
         fontFamily: "IBM Plex Mono, monospace",
         padding: 8,
         width: 150,
-        whiteSpace: "pre-line",
+        whiteSpace: "pre-line" as const,
         textAlign: "center" as const,
       },
-    }));
+    };
+  });
+}
 
-    if (!showDocuments) return eqNodes;
+export default function GraphExplorerPage() {
+  const [showDocuments, setShowDocuments] = useState(true);
+  const { data, isLoading, isError } = useGraphData(100);
 
-    const docNodes: Node[] = documents.map((d) => ({
-      id: d.id,
-      position: documentPositions[d.id],
-      data: { label: d.filename },
-      style: {
-        background: "rgba(79,209,197,0.08)",
-        border: "1px dashed #4FD1C5",
-        borderRadius: 8,
-        color: "#B7C0CB",
-        fontSize: 10,
-        fontFamily: "IBM Plex Mono, monospace",
-        padding: 8,
-        width: 170,
-        textAlign: "center" as const,
-      },
-    }));
+  const filteredNodes = useMemo(() => {
+    if (!data?.nodes) return [];
+    if (showDocuments) return data.nodes;
+    return data.nodes.filter((n) => n.node_type !== "Document");
+  }, [data, showDocuments]);
 
-    return [...eqNodes, ...docNodes];
-  }, [showDocuments]);
+  const nodeIds = useMemo(() => new Set(filteredNodes.map((n) => n.id)), [filteredNodes]);
+
+  const nodes: Node[] = useMemo(
+    () => layoutNodes(filteredNodes.map((n) => ({ id: n.id, label: n.label, node_type: n.node_type }))),
+    [filteredNodes],
+  );
 
   const edges: Edge[] = useMemo(() => {
-    return relationships
-      .filter((r) => showDocuments || (!r.from.startsWith("doc") && !r.to.startsWith("doc")))
-      .map((r, i) => ({
+    if (!data?.edges) return [];
+    return data.edges
+      .filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target))
+      .map((e, i) => ({
         id: `e-${i}`,
-        source: r.from,
-        target: r.to,
-        label: r.type,
+        source: e.source,
+        target: e.target,
+        label: e.rel_type,
         labelStyle: { fill: "#8A95A3", fontSize: 9 },
         style: { stroke: "#3A4552" },
-        animated: r.type === "CONNECTED_TO",
+        animated: e.rel_type === "CONNECTED_TO" || e.rel_type === "AFFECTS",
       }));
-  }, [showDocuments]);
+  }, [data, nodeIds]);
+
+  const isEmpty = !isLoading && !isError && filteredNodes.length === 0;
 
   return (
     <div className="flex h-[calc(100vh-7.5rem)] flex-col gap-4">
-      <div className="flex items-start gap-2 rounded-lg bg-[#4FD1C5]/10 px-4 py-3 text-[12px] text-[#4FD1C5] ring-1 ring-[#4FD1C5]/20">
-        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-        <span>
-          Preview using sample data -- your backend's <code>/metrics</code> confirms Neo4j has real nodes/edges, but
-          there's no endpoint yet that returns the actual graph. Add a route (e.g. <code>GET /api/v1/graph</code>)
-          that queries Neo4j and returns nodes + relationships, and this view can be wired to it directly.
-        </span>
-      </div>
-
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Graph Explorer</h1>
-          <p className="text-sm text-white/45">Traverse how assets, documents, and status connect.</p>
+          <p className="text-sm text-white/45">
+            Upload engineering documents to generate a knowledge graph, then explore connections here.
+          </p>
         </div>
         <label className="flex items-center gap-2 text-[12px] text-white/60">
           <input
@@ -112,24 +86,58 @@ export default function GraphExplorerPage() {
             checked={showDocuments}
             onChange={(e) => setShowDocuments(e.target.checked)}
             className="accent-[#E08A3C]"
+            aria-label="Show document nodes"
           />
           Show documents
         </label>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-hidden rounded-xl bg-white/[0.02] ring-1 ring-white/5">
-        <ReactFlow nodes={nodes} edges={edges} fitView proOptions={{ hideAttribution: true }}>
-          <Background color="#232a33" gap={24} />
-          <Controls className="!fill-white [&_button]:!border-white/10 [&_button]:!bg-[#12181F] [&_button]:!text-white" />
-          <MiniMap
-            pannable
-            zoomable
-            maskColor="rgba(11,15,20,0.7)"
-            nodeColor={() => "#3A4552"}
-            style={{ background: "#0E1319" }}
-          />
-        </ReactFlow>
-      </div>
+      {isLoading && (
+        <div className="flex items-center gap-2 text-sm text-white/40" role="status">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          Loading graph…
+        </div>
+      )}
+
+      {isError && (
+        <div className="flex items-center gap-2 rounded-lg bg-[#E08A3C]/10 px-4 py-3 text-sm text-[#E08A3C] ring-1 ring-[#E08A3C]/20">
+          <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+          Graph unavailable right now. Upload documents to build your graph, then try again.
+        </div>
+      )}
+
+      {isEmpty && (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/[0.02] px-6 py-16 ring-1 ring-white/5">
+          <Share2 className="h-8 w-8 text-white/20" aria-hidden="true" />
+          <p className="text-sm text-white/50">No graph data yet.</p>
+          <p className="max-w-md text-center text-[12px] text-white/30">
+            Upload maintenance logs, SOPs, or inspection reports from the Ingest page. The pipeline will
+            extract entities and relationships automatically.
+          </p>
+        </div>
+      )}
+
+      {!isEmpty && !isLoading && (
+        <div className="min-h-0 flex-1 overflow-hidden rounded-xl bg-white/[0.02] ring-1 ring-white/5">
+          <ReactFlow nodes={nodes} edges={edges} fitView proOptions={{ hideAttribution: true }}>
+            <Background color="#232a33" gap={24} />
+            <Controls className="!fill-white [&_button]:!border-white/10 [&_button]:!bg-[#12181F] [&_button]:!text-white" />
+            <MiniMap
+              pannable
+              zoomable
+              maskColor="rgba(11,15,20,0.7)"
+              nodeColor={() => "#3A4552"}
+              style={{ background: "#0E1319" }}
+            />
+          </ReactFlow>
+        </div>
+      )}
+
+      {data && data.total_nodes > 0 && (
+        <div className="text-[11px] text-white/30">
+          Showing {filteredNodes.length} of {data.total_nodes} nodes · {data.total_edges} relationships
+        </div>
+      )}
     </div>
   );
 }

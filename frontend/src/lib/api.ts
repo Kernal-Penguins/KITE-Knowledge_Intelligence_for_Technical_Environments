@@ -18,6 +18,9 @@ export const api = axios.create({
 // GET  /api/v1/agents/rca/{equipment_id}
 // POST /api/v1/agents/lessons/cluster?threshold=0.85
 // GET  /api/v1/agents/compliance
+// GET  /api/v1/graph/nodes
+// GET  /api/v1/uploads
+// GET  /api/v1/review-queue
 // POST /api/v1/agents/compliance/flags/{flag_hash}/review   { status }
 
 export const ROUTES = {
@@ -25,7 +28,10 @@ export const ROUTES = {
   version: "/version",
   metrics: "/metrics",
   ingest: "/api/v1/ingest",
+  uploads: "/api/v1/uploads",
+  reviewQueue: "/api/v1/review-queue",
   query: "/api/v1/query",
+  graphNodes: "/api/v1/graph/nodes",
   rca: (equipmentId: string) => `/api/v1/agents/rca/${encodeURIComponent(equipmentId)}`,
   lessonsCluster: "/api/v1/agents/lessons/cluster",
   compliance: "/api/v1/agents/compliance",

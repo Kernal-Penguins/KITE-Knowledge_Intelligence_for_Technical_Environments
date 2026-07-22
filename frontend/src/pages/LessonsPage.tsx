@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Loader2, AlertTriangle, GitBranch } from "lucide-react";
+import { Sparkles, Loader2, AlertTriangle, GitBranch, Info } from "lucide-react";
 import { useRunLessonsClustering } from "../hooks/useKiteApi";
 
 export default function LessonsPage() {
@@ -11,10 +11,19 @@ export default function LessonsPage() {
       <div>
         <h1 className="text-xl font-medium text-white">Lessons-Learned Clustering</h1>
         <p className="text-sm text-white/45">
-          Embeds every Failure node's description, clusters by cosine similarity, and writes{" "}
-          <code className="text-white/70">SIMILAR_FAILURE_MODE</code> edges back into Neo4j --{" "}
-          <code className="text-white/70">POST /api/v1/agents/lessons/cluster</code>.
+          Groups similar failure events in the knowledge graph by semantic similarity,
+          surfacing patterns across equipment and time.
         </p>
+      </div>
+
+      {/* How-to tip */}
+      <div className="flex items-start gap-2 rounded-lg bg-white/[0.03] px-4 py-3 text-[12px] text-white/55 ring-1 ring-white/5">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4FD1C5]" />
+        <span>
+          Run this after ingesting documents. The algorithm embeds every Failure node description,
+          computes cosine similarity, and writes new graph edges for pairs above the threshold.
+          Check the Graph Explorer afterwards to see the clusters.
+        </span>
       </div>
 
       <div className="rounded-lg bg-white/[0.03] px-4 py-4 ring-1 ring-white/5">
@@ -32,7 +41,7 @@ export default function LessonsPage() {
           className="w-full accent-[#E08A3C]"
         />
         <p className="mt-1 text-[10px] text-white/30">
-          Higher = only near-identical failure descriptions get linked. Lower = looser, broader clusters.
+          Higher → only near-identical failure descriptions get linked. Lower → broader, looser clusters.
         </p>
         <button
           onClick={() => cluster.mutate(threshold)}
@@ -53,7 +62,7 @@ export default function LessonsPage() {
 
       {cluster.data?.status === "skipped" && (
         <div className="rounded-lg bg-white/[0.04] px-4 py-3 text-sm text-white/60 ring-1 ring-white/10">
-          Skipped -- {cluster.data.reason}
+          Skipped — {cluster.data.reason}
         </div>
       )}
 

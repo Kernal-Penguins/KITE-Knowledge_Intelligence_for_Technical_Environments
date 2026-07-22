@@ -15,10 +15,10 @@ env/
 .env
 .env.*
 !.env.example
+*.tsbuildinfo
 
 # ── uv ────────────────────────────────────────────────
 .uv/
-uv.lock
 
 # ── Testing ───────────────────────────────────────────
 .pytest_cache/
