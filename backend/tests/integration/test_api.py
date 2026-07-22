@@ -14,17 +14,16 @@ Requires:
 import io
 
 import pytest
-import httpx
+from fastapi.testclient import TestClient
+from app.main import app
 
-BASE_URL = "http://localhost:8000"
-API_V1 = f"{BASE_URL}/api/v1"
-
-TIMEOUT = 30.0
+API_V1 = "/api/v1"
 
 
 @pytest.fixture(scope="session")
-def client() -> httpx.Client:
-    return httpx.Client(base_url=BASE_URL, timeout=TIMEOUT)
+def client():
+    with TestClient(app) as c:
+        yield c
 
 
 # ══════════════════════════════════════════════════════════════════

@@ -48,9 +48,9 @@ def _get_cleaned_extraction_schema():
 
 
 class GeminiProvider(LLMProvider):
-    FLASH = "gemini-2.5-flash"
-    PRO = "gemini-2.5-pro"
-    FLASH_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"]
+    FLASH = "gemini-2.0-flash"
+    PRO = "gemini-1.5-pro"
+    FLASH_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
 
     def __init__(self):
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)

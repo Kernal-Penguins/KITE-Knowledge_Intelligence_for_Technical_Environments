@@ -1,34 +1,59 @@
 # KITE (Knowledge Intelligence for Technical Environments)
 
-KITE is an autonomous Industrial GraphRAG system. It automatically ingests maintenance logs, Standard Operating Procedures (SOPs), and Piping & Instrumentation Diagrams (P&IDs) into a highly structured Neo4j Knowledge Graph and Qdrant Vector database, exposing an intelligent AI Copilot and autonomous compliance and RCA agents.
+KITE is an autonomous Industrial GraphRAG system designed for enterprise asset intelligence and operational decision support. It automatically ingests maintenance logs, Standard Operating Procedures (SOPs), Work Orders, and Piping & Instrumentation Diagrams (P&IDs) into a structured Neo4j Knowledge Graph and Qdrant Vector database, exposing an intelligent AI Copilot and autonomous compliance and RCA agents.
 
-## Prerequisites
-- Docker & Docker Compose (for databases)
-- Python 3.11+
-- Node.js 18+ (for frontend)
-- `uv` (Fast python package manager)
+---
 
-## 1. Setup Infrastructure
-Spin up the required databases (Neo4j, Qdrant, PostgreSQL) using Docker Compose:
+## Technical Stack & Frameworks
+
+- **Backend Framework**: FastAPI, Python 3.12/3.14, SQLAlchemy, Pydantic v2, Google GenAI SDK.
+- **Frontend Framework**: Vite, React, TypeScript, TailwindCSS.
+- **Databases**: Neo4j (Knowledge Graph), Qdrant (Vector Database), PostgreSQL (Relational Metadata & Audit Logs).
+- **Embeddings & Reranking**: `sentence-transformers/all-MiniLM-L6-v2` and `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+- **Development & AI Assistance**: Built with **Antigravity** (Google DeepMind agentic AI environment) for rapid architectural design, container orchestration, and GraphRAG optimization.
+
+---
+
+## Core System Features
+
+- **GraphRAG Copilot**: Natural language query engine combining semantic vector retrieval with deterministic multi-hop graph traversals to provide cited responses.
+- **Root Cause Analysis (RCA) Agent**: Autonomous agent that traverses equipment failure chains to generate chronological RCA reports and root-cause hypotheses.
+- **Lessons Learned Agent**: Vector embedding clustering engine that identifies similar failure modes and creates `SIMILAR_FAILURE_MODE` relationships across graph nodes.
+- **Compliance Audit Agent**: Deterministic Cypher audit engine executing rule-based compliance checks (e.g., verifying LOTO procedures against certified personnel).
+- **Entity Resolution Engine**: Hybrid fuzzy ratio and LLM adjudication pipeline that deduplicates equipment and failure tag aliases (e.g., `P-104` and `Pump 104`).
+
+---
+
+## System Prerequisites
+
+- Docker & Docker Compose
+- Python 3.12+
+- Node.js 20+
+- `uv` (Fast Python package manager)
+
+---
+
+## Installation & Deployment
+
+### 1. Database Infrastructure Setup
+Spin up PostgreSQL, Neo4j, and Qdrant containers:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
-*Wait ~10 seconds for the databases to fully initialize.*
 
-## 2. Setup Backend
+### 2. Backend Environment Setup
 ```bash
 cd backend
-# Create virtual environment and install dependencies
 uv venv
-# On Windows: .\.venv\Scripts\activate
-# On Mac/Linux: source .venv/bin/activate
-uv pip install -r requirements.txt
+# Windows: .\.venv\Scripts\activate
+# Linux/macOS: source .venv/bin/activate
+uv pip install -r pyproject.toml
 ```
 
-### Environment Variables
-Ensure you have your `GEMINI_API_KEY` set. You can create a `.env` file in the `backend` directory:
+#### Environment Variables Configuration
+Configure your `GEMINI_API_KEY` in `backend/.env` (or root `.env`):
 ```env
-GEMINI_API_KEY=your_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=kite_password
@@ -36,35 +61,27 @@ POSTGRES_URI=postgresql+asyncpg://postgres:kite_password@localhost:5432/kite
 QDRANT_URL=http://localhost:6333
 ```
 
-### Run Backend
+#### Run Backend Server
 ```bash
 cd backend
-uvicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
-*The API will be available at http://localhost:8000.*
+The FastAPI backend service will run at `http://localhost:8000`.
 
-## 3. Setup Frontend
+### 3. Frontend Application Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*The React UI will be available at http://localhost:5173.*
+The React frontend application will run at `http://localhost:5173`.
 
-## Project Architecture
-- **Backend**: FastAPI, LangChain, SentenceTransformers, BAAI Reranker, Google Gemini.
-- **Frontend**: Vite, React, TailwindCSS, TanStack Query, Lucide Icons.
-- **Databases**: Neo4j (Graph), Qdrant (Vector), PostgreSQL (Logs/State).
+---
 
-## Features
-- **GraphRAG Copilot:** Ask natural language questions and receive cited answers grounded in both semantic text chunks and deterministic graph edges.
-- **Root Cause Analysis (RCA) Agent:** Input an equipment ID to auto-generate an RCA report traversing its failure and incident history.
-- **Lessons Learned Agent:** Auto-cluster historical failures using vector embeddings to create `SIMILAR_FAILURE_MODE` links in the graph.
-- **Compliance Agent:** Deterministic 5-rule Cypher audit engine to flag safety violations (e.g. LOTO procedures performed without certification).
+## Automated Benchmark Evaluation
 
-## Evaluation
-To run the automated evaluation suite against the GraphRAG pipeline:
+To execute the automated evaluation suite against the GraphRAG pipeline and log scores to PostgreSQL:
 ```bash
 cd backend
-python scripts/run_evaluation.py
+uv run python scripts/run_evaluation.py
 ```
