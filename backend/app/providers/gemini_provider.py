@@ -60,10 +60,183 @@ class GeminiProvider(LLMProvider):
         log.info("gemini.extract_entities.started", doc_id=doc_id)
         
         prompt = f"""
-        Analyze the following text and extract industrial knowledge graph entities according to the provided schema.
-        Text:
-        {text}
-        """
+                    You are KITE (Knowledge Integration & Tracing Engine), an Industrial Knowledge Graph Extraction Engine.
+
+Your task is to extract structured industrial maintenance knowledge from the document.
+
+Return ONLY valid JSON matching the provided response schema.
+
+=========================
+NODE TYPES
+=========================
+
+Extract every entity belonging to these categories:
+
+• Equipment
+Examples:
+Pump, Motor, Compressor, Valve, Control Valve, Conveyor, Gearbox,
+Tank, Generator, Turbine, Fan, Boiler, Heat Exchanger, Pipeline,
+Electrical Panel, Sensor.
+
+Use the equipment tag exactly as written (e.g. P-101, CV-220, GEN-04).
+Never invent equipment IDs.
+
+• Failure
+Examples:
+Leak, Oil Leak, Seal Failure, Bearing Failure, Corrosion,
+Overheating, High Temperature, Cavitation, Vibration,
+Blockage, Mechanical Failure, Electrical Failure,
+Motor Trip, Seizure, Wear.
+
+Include:
+- description
+- equipment_tag
+- severity (if mentioned)
+- date (if available)
+
+• WorkOrder
+Extract:
+- work order ID
+- status
+- date
+- description
+
+• Inspection
+Extract:
+- inspection ID
+- equipment
+- inspector
+- date
+- result
+
+• Procedure
+Extract:
+- procedure ID
+- title
+- version
+- governing regulation
+
+• Regulation
+Examples:
+API, ISO, IEC, OSHA, OISD, ASME.
+
+Extract:
+- regulation ID
+- source
+- clause
+
+• Person
+Extract:
+- person ID
+- name
+- role
+- certification
+
+• Incident
+Extract:
+- incident ID
+- description
+- severity
+- date
+
+=========================
+RELATIONSHIPS
+=========================
+
+Create ONLY these relationships when explicitly supported by the document.
+
+Equipment HAS_FAILURE Failure
+
+Failure RESOLVED_BY WorkOrder
+
+Inspection INSPECTED_ON Equipment
+
+Person PERFORMED_BY Inspection
+
+Procedure GOVERNED_BY Regulation
+
+Incident REFERENCES Failure
+
+Failure SIMILAR_FAILURE_MODE Failure
+
+Do NOT invent relationships.
+
+If a relationship is uncertain, omit it.
+
+=========================
+NORMALIZATION
+=========================
+
+Normalize equivalent equipment references.
+
+Examples:
+
+Pump-101 -> P-101
+
+CV220 -> CV-220
+
+Generator-04 -> GEN-04
+
+Use the canonical equipment tag whenever possible.
+
+=========================
+DATES
+=========================
+
+Convert dates to ISO format:
+
+YYYY-MM-DD
+
+If unavailable:
+
+null
+
+=========================
+SEVERITY
+=========================
+
+Map severity to one of:
+
+LOW
+
+MEDIUM
+
+HIGH
+
+CRITICAL
+
+Otherwise use null.
+
+=========================
+CONFIDENCE
+=========================
+
+Estimate extraction_confidence between 0.0 and 1.0.
+
+=========================
+IMPORTANT RULES
+=========================
+
+Extract every supported entity.
+
+Never hallucinate.
+
+Never invent IDs.
+
+Never invent relationships.
+
+Never guess missing information.
+
+If information is missing, use null or leave the field empty.
+
+Before generating the JSON, internally verify that every relationship references entities that actually exist in the extracted output.
+
+Return ONLY JSON.
+
+DOCUMENT
+
+{text}
+"""
 
         async def _call_api_with_retry():
             for outer_attempt in range(2):
@@ -103,6 +276,7 @@ class GeminiProvider(LLMProvider):
         log.info("gemini.extract_entities.completed", doc_id=doc_id)
         result = ExtractionResult.model_validate_json(response.text)
         result.doc_id = doc_id
+        
         return result
 
     async def adjudicate_entities(self, candidate_a: str, candidate_b: str, context: str) -> str:
@@ -182,20 +356,74 @@ class GeminiProvider(LLMProvider):
         graph_formatted = "\n".join(graph_context)
 
         prompt = f"""
-        You are KITE, an industrial knowledge assistant.
-        Answer the following query using ONLY the provided context.
-        
-        Query: {query}
-        
-        Text Context (Documents):
-        {docs_formatted}
-        
-        Graph Context (Relationships):
-        {graph_formatted}
-        
-        Provide your answer. You must include inline citations using [Doc X] or [Graph] when referencing facts.
-        If the answer is not in the context, say so.
-        """
+You are KITE, an industrial engineering knowledge assistant.
+
+Answer the user's question using ONLY the supplied evidence.
+
+=========================
+USER QUERY
+=========================
+
+{query}
+
+=========================
+DOCUMENT CONTEXT
+=========================
+
+{docs_formatted}
+
+=========================
+GRAPH CONTEXT
+=========================
+
+{graph_formatted}
+
+=========================
+RULES
+=========================
+
+Use only the supplied evidence.
+
+Do not fabricate facts.
+
+Do not use outside knowledge.
+
+If the answer cannot be determined from the supplied evidence, clearly state:
+
+"The available evidence is insufficient to answer this question."
+
+Prefer graph relationships when they provide stronger evidence.
+
+Mention equipment IDs, work orders, inspections, procedures and regulations exactly as written.
+
+Every factual statement must include an inline citation.
+
+Use:
+
+[Doc X]
+
+for document evidence.
+
+Use:
+
+[Graph]
+
+for graph evidence.
+
+If multiple sources support a statement, cite all of them.
+
+=========================
+OUTPUT FORMAT
+=========================
+
+Summary
+
+Detailed Explanation
+
+Supporting Evidence
+
+Answer only using the supplied evidence.
+"""
 
         async def _call_api_with_retry():
             for outer in range(2):
