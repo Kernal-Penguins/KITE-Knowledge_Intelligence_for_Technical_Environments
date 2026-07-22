@@ -47,10 +47,9 @@ export default function AppShell() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors ${
-                  isActive
-                    ? "bg-white/[0.08] text-white"
-                    : "text-white/55 hover:bg-white/[0.04] hover:text-white/85"
+                `flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors ${isActive
+                  ? "bg-white/[0.08] text-white"
+                  : "text-white/55 hover:bg-white/[0.04] hover:text-white/85"
                 }`
               }
             >

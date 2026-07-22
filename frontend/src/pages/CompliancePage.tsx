@@ -15,7 +15,7 @@ function entityLabel(row: Record<string, string>): string {
 }
 
 export default function CompliancePage() {
-  const { data, isLoading, isError, error } = useComplianceAudit();
+  const { data, isLoading, isError } = useComplianceAudit();
   const review = useReviewComplianceFlag();
 
   return (
@@ -44,9 +44,8 @@ export default function CompliancePage() {
         <>
           <div className="flex items-center gap-3">
             <span
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium ${
-                data.status === "passed" ? "bg-[#28c840]/15 text-[#28c840]" : "bg-[#E08A3C]/15 text-[#E08A3C]"
-              }`}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium ${data.status === "passed" ? "bg-[#28c840]/15 text-[#28c840]" : "bg-[#E08A3C]/15 text-[#E08A3C]"
+                }`}
             >
               {data.status === "passed" ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
               {data.status === "passed" ? "Passed" : "Failed"}
