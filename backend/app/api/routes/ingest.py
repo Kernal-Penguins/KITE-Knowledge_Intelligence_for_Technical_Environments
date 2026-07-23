@@ -7,9 +7,12 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile, Query
+from sqlalchemy import text
 
 from app.infrastructure.logger import log
+from app.infrastructure.neo4j_client import neo4j_client
+from app.infrastructure.postgres_client import get_db_session
 from app.pipeline.ingestion_pipeline import run_ingestion
 from app.repositories.postgres_repo import postgres_repo
 from app.shared.api_models import IngestResponse
@@ -97,3 +100,99 @@ async def ingest_document(
         status="queued",
         message="Document queued for processing.",
     )
+
+
+@router.get("/uploads")
+async def list_uploads(
+    limit: int = Query(default=50, ge=1, le=200),
+    status: str | None = Query(default=None, description="Filter by status: queued | complete | failed"),
+) -> list[dict]:
+    """
+    Return a list of past upload jobs from PostgreSQL.
+    Ordered newest-first.
+    """
+    try:
+        async with get_db_session() as db:
+            where = "WHERE status = :status" if status else ""
+            rows = await db.execute(
+                text(
+                    f"""
+                    SELECT job_id, doc_id, filename, doc_type, status,
+                           pipeline_stage, error_message, created_at, completed_at
+                    FROM uploads
+                    {where}
+                    ORDER BY created_at DESC
+                    LIMIT :limit
+                    """  # noqa: S608
+                ),
+                {"limit": limit, "status": status} if status else {"limit": limit},
+            )
+            records = rows.mappings().all()
+            return [
+                {
+                    "job_id": r["job_id"],
+                    "doc_id": r["doc_id"],
+                    "filename": r["filename"],
+                    "doc_type": r["doc_type"],
+                    "status": r["status"],
+                    "pipeline_stage": r["pipeline_stage"],
+                    "error_message": r["error_message"],
+                    "created_at": r["created_at"].isoformat() if r["created_at"] else None,
+                    "completed_at": r["completed_at"].isoformat() if r["completed_at"] else None,
+                }
+                for r in records
+            ]
+    except Exception as exc:
+        log.warning("ingest.list_uploads_failed", error=str(exc))
+        return []
+
+
+@router.get("/review-queue")
+async def get_review_queue(
+    limit: int = Query(default=50, ge=1, le=200),
+) -> list[dict]:
+    """
+    Return entity-resolution candidates awaiting human review.
+    Sourced from equipment nodes in Neo4j that have alias tags pending confirmation.
+    Returns an empty list gracefully when the graph is empty or Neo4j is unavailable.
+    """
+    items: list[dict] = []
+    try:
+        async with neo4j_client.session() as session:
+            result = await session.run(
+                """
+                MATCH (n:Equipment)
+                WHERE n.aliases IS NOT NULL AND size(n.aliases) > 0
+                UNWIND n.aliases AS alias
+                RETURN n.id AS entity_a,
+                       alias AS entity_b,
+                       'Equipment' AS entity_type,
+                       coalesce(n.source_doc_ids[0], 'ingestion') AS source
+                LIMIT $limit
+                """,
+                limit=limit,
+            )
+            records = await result.data()
+            for i, rec in enumerate(records):
+                entity_a = str(rec.get("entity_a") or "")
+                entity_b = str(rec.get("entity_b") or "")
+                if not entity_a or not entity_b:
+                    continue
+                items.append(
+                    {
+                        "id": f"rq-{i}-{entity_a}-{entity_b}",
+                        "entity_a": entity_a,
+                        "entity_b": entity_b,
+                        "entity_type": str(rec.get("entity_type") or "Equipment"),
+                        "confidence": 0.85,
+                        "source": str(rec.get("source") or "ingestion"),
+                    }
+                )
+    except RuntimeError as exc:
+        log.warning("ingest.review_queue.driver_not_ready", error=str(exc))
+        return []
+    except Exception as exc:
+        log.warning("ingest.review_queue_failed", error=str(exc))
+        return []
+
+    return items

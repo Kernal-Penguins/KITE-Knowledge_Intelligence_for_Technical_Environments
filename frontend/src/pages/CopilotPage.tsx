@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Loader2, AlertTriangle, BookOpen } from "lucide-react";
+import { Send, Loader2, AlertTriangle, BookOpen, Lightbulb } from "lucide-react";
 import { useCopilotQuery } from "../hooks/useKiteApi";
 import ResultViewer from "../components/ResultViewer";
 
@@ -10,6 +10,13 @@ interface Exchange {
   citations: Record<string, unknown>;
 }
 
+const EXAMPLE_QUERIES = [
+  "Summarize this incident",
+  "Explain this maintenance log",
+  "Show similar failures",
+  "Which standards apply?",
+];
+
 export default function CopilotPage() {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<Exchange[]>([]);
@@ -17,7 +24,7 @@ export default function CopilotPage() {
 
   const submit = () => {
     const q = input.trim();
-    if (!q) return;
+    if (!q || copilot.isPending) return;
     copilot.mutate(q, {
       onSuccess: (data) => {
         setHistory((prev) => [{ query: q, ...data }, ...prev]);
@@ -31,26 +38,25 @@ export default function CopilotPage() {
       <div>
         <h1 className="text-xl font-medium text-white">Copilot</h1>
         <p className="text-sm text-white/45">
-          Grounded GraphRAG Q&amp;A -- posts to <code className="text-white/70">/api/v1/query</code>.
+          Ask anything about your ingested documents. Answers are grounded in your knowledge graph
+          with source citations.
         </p>
       </div>
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit();
-        }}
+        onSubmit={(e) => { e.preventDefault(); submit(); }}
         className="flex items-center gap-3 rounded-full bg-white/[0.05] py-1.5 pl-5 pr-1.5 ring-1 ring-white/10"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about an asset, failure, or inspection..."
+          onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) submit(); }}
+          placeholder="Ask about an asset, failure, procedure, or inspection…"
           className="flex-1 bg-transparent py-2 text-sm text-white outline-none placeholder-white/35"
         />
         <button
           type="submit"
-          disabled={copilot.isPending}
+          disabled={copilot.isPending || !input.trim()}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E08A3C] text-[#0B0F14] hover:bg-[#EDA45E] disabled:opacity-50"
         >
           {copilot.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
@@ -60,14 +66,31 @@ export default function CopilotPage() {
       {copilot.isError && (
         <div className="flex items-center gap-2 rounded-lg bg-[#E08A3C]/10 px-4 py-3 text-sm text-[#E08A3C] ring-1 ring-[#E08A3C]/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          Query failed: {copilot.error instanceof Error ? copilot.error.message : "unknown error"}
+          Query failed. Please try again shortly.
         </div>
       )}
 
       <div className="space-y-4">
         {history.length === 0 && !copilot.isPending && (
-          <p className="text-sm text-white/30">Ask a question to see a grounded answer with citations.</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-1.5 text-[11px] text-white/35">
+              <Lightbulb className="h-3 w-3" />
+              Try one of these example queries:
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {EXAMPLE_QUERIES.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => setInput(q)}
+                  className="rounded-full bg-white/[0.04] px-3 py-1.5 text-[12px] text-white/55 ring-1 ring-white/10 hover:bg-white/[0.07] hover:text-white/80 transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
+
         {history.map((ex, i) => (
           <div key={i} className="rounded-lg bg-white/[0.03] px-4 py-3.5 ring-1 ring-white/5">
             <div className="text-[12px] text-white/45">You asked</div>

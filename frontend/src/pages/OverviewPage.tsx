@@ -15,7 +15,9 @@ export default function OverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-medium text-white">Overview</h1>
-        <p className="text-sm text-white/45">Live from your KITE backend -- GET /metrics &amp; GET /health.</p>
+        <p className="text-sm text-white/45">
+          Live system counters and database connectivity status.
+        </p>
       </div>
 
       {health && (
@@ -27,31 +29,33 @@ export default function OverviewPage() {
           >
             {health.status === "ok" ? "All systems connected" : "Degraded"}
           </span>
-          {Object.entries(health.services).map(([key, svc]) => (
-            <span
-              key={key}
-              className="flex items-center gap-1.5 rounded-full bg-white/[0.05] px-2.5 py-1 text-[11px] text-white/60"
-            >
+          {/* Guard: services may be null/undefined if the health response is partial */}
+          {health.services &&
+            Object.entries(health.services).map(([key, svc]) => (
               <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: svc.status === "connected" ? "#28c840" : "#E08A3C" }}
-              />
-              {serviceLabels[key] ?? key}
-            </span>
-          ))}
+                key={key}
+                className="flex items-center gap-1.5 rounded-full bg-white/[0.05] px-2.5 py-1 text-[11px] text-white/60"
+              >
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: svc.status === "connected" ? "#28c840" : "#E08A3C" }}
+                />
+                {serviceLabels[key] ?? key}
+              </span>
+            ))}
         </div>
       )}
 
       {metricsLoading && (
         <div className="flex items-center gap-2 text-sm text-white/40">
-          <Loader2 className="h-4 w-4 animate-spin" /> Loading metrics...
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading metrics…
         </div>
       )}
 
       {metricsError && (
         <div className="flex items-center gap-2 rounded-lg bg-[#E08A3C]/10 px-4 py-3 text-sm text-[#E08A3C] ring-1 ring-[#E08A3C]/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          Couldn't reach the backend at /metrics. Make sure it's running and the Vite proxy / nginx rule points at it.
+          Backend unreachable. Please verify the application is running and try again.
         </div>
       )}
 

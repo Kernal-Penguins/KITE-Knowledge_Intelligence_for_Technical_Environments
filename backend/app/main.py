@@ -94,16 +94,19 @@ def create_app() -> FastAPI:
     from app.api.routes.ingest import router as ingest_router
     from app.api.routes.query import router as query_router
     from app.api.routes.agents import router as agents_router
+    from app.api.routes.graph import router as graph_router
 
     app.include_router(health_router)
     app.include_router(ingest_router, prefix="/api/v1")
     app.include_router(query_router, prefix="/api/v1")
     app.include_router(agents_router, prefix="/api/v1")
+    app.include_router(graph_router, prefix="/api/v1")
 
     # Compatibility for /api without /v1
     app.include_router(ingest_router, prefix="/api")
     app.include_router(query_router, prefix="/api")
     app.include_router(agents_router, prefix="/api")
+    app.include_router(graph_router, prefix="/api")
 
     return app
 

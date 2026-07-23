@@ -15,7 +15,7 @@ function entityLabel(row: Record<string, string>): string {
 }
 
 export default function CompliancePage() {
-  const { data, isLoading, isError, error } = useComplianceAudit();
+  const { data, isLoading, isError } = useComplianceAudit();
   const review = useReviewComplianceFlag();
 
   return (
@@ -23,8 +23,7 @@ export default function CompliancePage() {
       <div>
         <h1 className="text-xl font-medium text-white">Compliance</h1>
         <p className="text-sm text-white/45">
-          Runs 5 deterministic Cypher audit rules against the graph --{" "}
-          <code className="text-white/70">GET /api/v1/agents/compliance</code>.
+          Runs deterministic audit rules against your knowledge graph to surface compliance gaps.
         </p>
       </div>
 
@@ -37,7 +36,7 @@ export default function CompliancePage() {
       {isError && (
         <div className="flex items-center gap-2 rounded-lg bg-[#E08A3C]/10 px-4 py-3 text-sm text-[#E08A3C] ring-1 ring-[#E08A3C]/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          Audit failed: {error instanceof Error ? error.message : "unknown error"}
+          Audit failed. Please try again shortly.
         </div>
       )}
 
@@ -45,9 +44,8 @@ export default function CompliancePage() {
         <>
           <div className="flex items-center gap-3">
             <span
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium ${
-                data.status === "passed" ? "bg-[#28c840]/15 text-[#28c840]" : "bg-[#E08A3C]/15 text-[#E08A3C]"
-              }`}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium ${data.status === "passed" ? "bg-[#28c840]/15 text-[#28c840]" : "bg-[#E08A3C]/15 text-[#E08A3C]"
+                }`}
             >
               {data.status === "passed" ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
               {data.status === "passed" ? "Passed" : "Failed"}

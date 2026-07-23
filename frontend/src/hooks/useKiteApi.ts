@@ -3,12 +3,15 @@ import { api, ROUTES } from "../lib/api";
 import type {
   ComplianceAuditResponse,
   ComplianceReviewResponse,
+  GraphExplorerResponse,
   HealthResponse,
   IngestResponse,
   LessonsClusterResponse,
   MetricsResponse,
   QueryResponse,
   RcaResponse,
+  ReviewQueueItem,
+  UploadRecord,
 } from "../lib/types";
 
 // ── Observability ────────────────────────────────────────────────────────
@@ -41,6 +44,35 @@ export function useIngestDocument() {
       });
       return res.data;
     },
+  });
+}
+
+export function useUploadsList() {
+  return useQuery({
+    queryKey: ["uploads"],
+    queryFn: async () => (await api.get<UploadRecord[]>(ROUTES.uploads)).data,
+    refetchInterval: 10_000,
+  });
+}
+
+export function useGraphData(limit = 100, nodeType?: string) {
+  return useQuery({
+    queryKey: ["graph", limit, nodeType],
+    queryFn: async () => {
+      const params: Record<string, string | number> = { limit };
+      if (nodeType) params.node_type = nodeType;
+      const res = await api.get<GraphExplorerResponse>(ROUTES.graphNodes, { params });
+      return res.data;
+    },
+    retry: 1,
+  });
+}
+
+export function useReviewQueue() {
+  return useQuery({
+    queryKey: ["review-queue"],
+    queryFn: async () => (await api.get<ReviewQueueItem[]>(ROUTES.reviewQueue)).data,
+    retry: 1,
   });
 }
 
