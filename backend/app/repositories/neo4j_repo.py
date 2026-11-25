@@ -3,9 +3,23 @@ repositories/neo4j_repo.py
 ──────────────────────────
 Graph repository for persisting entities and relationships.
 """
+import re
+from enum import Enum
+
 from app.infrastructure.logger import log
 from app.infrastructure.neo4j_client import neo4j_client
 from app.shared.schemas import ExtractionResult
+
+_GRAPH_TOKEN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def graph_token(value: object) -> str:
+    """Neo4j label or relationship type. Enum members use their value, not their name."""
+    raw = value.value if isinstance(value, Enum) else value
+    token = str(raw)
+    if _GRAPH_TOKEN.fullmatch(token) is None:
+        raise ValueError(f"Refusing graph token {token!r}")
+    return token
 
 
 class Neo4jRepo:
@@ -101,12 +115,16 @@ class Neo4jRepo:
                     ON MATCH SET n.source_doc_ids = [x IN n.source_doc_ids WHERE x <> $doc_id] + [$doc_id]
                     """, id=i.incident_id, date=i.date, desc=i.description, severity=i.severity, doc_id=result.doc_id)
 
-                # Relationships
+                # Relationships. Labels must be the enum value ("Equipment"), not
+                # "NodeLabel.EQUIPMENT", which Neo4j rejects.
                 for rel in result.relationships:
+                    from_label = graph_token(rel.from_label)
+                    to_label = graph_token(rel.to_label)
+                    rel_type = graph_token(rel.rel_type)
                     await tx.run(f"""
-                    MERGE (a:{rel.from_label} {{id: $from_id}})
-                    MERGE (b:{rel.to_label} {{id: $to_id}})
-                    MERGE (a)-[r:{rel.rel_type}]->(b)
+                    MERGE (a:{from_label} {{id: $from_id}})
+                    MERGE (b:{to_label} {{id: $to_id}})
+                    MERGE (a)-[r:{rel_type}]->(b)
                     ON CREATE SET r.source_doc_ids = [$doc_id]
                     ON MATCH SET r.source_doc_ids = [x IN r.source_doc_ids WHERE x <> $doc_id] + [$doc_id]
                     """, from_id=rel.from_id, to_id=rel.to_id, doc_id=result.doc_id)

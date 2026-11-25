@@ -3,6 +3,7 @@
 $ErrorActionPreference = "Stop"
 
 $RepoUrl = "https://github.com/Kernal-Penguins/KITE-Knowledge_Intelligence_for_Technical_Environments.git"
+$Branch = "cursor/desktop-setup-script-e6d7"
 $Desktop = [Environment]::GetFolderPath("Desktop")
 $Dest = Join-Path $Desktop "KITE"
 
@@ -15,9 +16,17 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
   throw "Docker is not installed. Install Docker Desktop, start it, then run this script again. https://docs.docker.com/get-docker/"
 }
 
-if (-not (Test-Path (Join-Path $Dest "docker-compose.yml"))) {
+if (Test-Path (Join-Path $Dest ".git")) {
+  git -C $Dest fetch --depth 1 origin $Branch
+  if ($LASTEXITCODE -ne 0) { throw "git fetch failed" }
+  git -C $Dest checkout -B $Branch FETCH_HEAD
+  if ($LASTEXITCODE -ne 0) { throw "git checkout failed" }
+} elseif (-not (Test-Path (Join-Path $Dest "docker-compose.yml"))) {
   if (Test-Path $Dest) { Remove-Item -Recurse -Force $Dest }
-  git clone --depth 1 $RepoUrl $Dest
+  git clone --depth 1 --branch $Branch $RepoUrl $Dest
+  if ($LASTEXITCODE -ne 0) { throw "git clone failed" }
+} else {
+  throw "$Dest exists but is not a git checkout. Move that folder aside and run this script again."
 }
 
 Set-Location $Dest

@@ -4,6 +4,7 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/Kernal-Penguins/KITE-Knowledge_Intelligence_for_Technical_Environments.git"
+BRANCH="cursor/desktop-setup-script-e6d7"
 
 if [[ -d "${HOME}/Desktop" ]]; then
   DESKTOP="${HOME}/Desktop"
@@ -28,9 +29,15 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -f "${DEST}/docker-compose.yml" ]]; then
+if [[ -d "${DEST}/.git" ]]; then
+  git -C "${DEST}" fetch --depth 1 origin "${BRANCH}"
+  git -C "${DEST}" checkout -B "${BRANCH}" FETCH_HEAD
+elif [[ ! -f "${DEST}/docker-compose.yml" ]]; then
   rm -rf "${DEST}"
-  git clone --depth 1 "${REPO_URL}" "${DEST}"
+  git clone --depth 1 --branch "${BRANCH}" "${REPO_URL}" "${DEST}"
+else
+  echo "${DEST} exists but is not a git checkout. Move that folder aside and run this script again." >&2
+  exit 1
 fi
 
 cd "${DEST}"
