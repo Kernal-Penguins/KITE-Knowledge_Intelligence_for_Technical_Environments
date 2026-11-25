@@ -119,53 +119,64 @@ async def run_ingestion(job_id: str, file_path: Path) -> None:
                 break
             start = end - OVERLAP
 
-        if chunks:
-            vectors = await asyncio.to_thread(embedder.embed_batch, chunks)
+        points: list[PointStruct] = []
+        vector_note: str | None = None
+        try:
+            if chunks:
+                vectors = await asyncio.to_thread(embedder.embed_batch, chunks)
 
-            # Collect canonical node IDs for payload linking
-            all_node_ids: list[str] = []
-            for eq in resolved_result.equipment:
-                all_node_ids.append(eq.tag_id)
-            for f in resolved_result.failures:
-                all_node_ids.append(f.failure_id)
-            for p in resolved_result.procedures:
-                all_node_ids.append(p.procedure_id)
-            for p in resolved_result.personnel:
-                all_node_ids.append(p.person_id)
-            for r in resolved_result.regulations:
-                all_node_ids.append(r.reg_id)
-            for i in resolved_result.inspections:
-                all_node_ids.append(i.inspection_id)
-            for w in resolved_result.work_orders:
-                all_node_ids.append(w.wo_id)
-            for i in resolved_result.incidents:
-                all_node_ids.append(i.incident_id)
+                # Collect canonical node IDs for payload linking
+                all_node_ids: list[str] = []
+                for eq in resolved_result.equipment:
+                    all_node_ids.append(eq.tag_id)
+                for f in resolved_result.failures:
+                    all_node_ids.append(f.failure_id)
+                for p in resolved_result.procedures:
+                    all_node_ids.append(p.procedure_id)
+                for p in resolved_result.personnel:
+                    all_node_ids.append(p.person_id)
+                for r in resolved_result.regulations:
+                    all_node_ids.append(r.reg_id)
+                for i in resolved_result.inspections:
+                    all_node_ids.append(i.inspection_id)
+                for w in resolved_result.work_orders:
+                    all_node_ids.append(w.wo_id)
+                for i in resolved_result.incidents:
+                    all_node_ids.append(i.incident_id)
 
-            points: list[PointStruct] = []
-            for chunk, vector in zip(chunks, vectors):
-                chunk_lower = chunk.lower()
-                linked_nodes = [nid for nid in all_node_ids if nid.lower() in chunk_lower]
-                points.append(
-                    PointStruct(
-                        id=str(uuid.uuid4()),
-                        vector=vector,
-                        payload={
-                            "text": chunk,
-                            "doc_id": doc_id,
-                            "graph_node_ids": linked_nodes,
-                        },
+                for chunk, vector in zip(chunks, vectors):
+                    chunk_lower = chunk.lower()
+                    linked_nodes = [nid for nid in all_node_ids if nid.lower() in chunk_lower]
+                    points.append(
+                        PointStruct(
+                            id=str(uuid.uuid4()),
+                            vector=vector,
+                            payload={
+                                "text": chunk,
+                                "doc_id": doc_id,
+                                "graph_node_ids": linked_nodes,
+                            },
+                        )
                     )
-                )
 
-            await qdrant_repo.upsert_chunks(points)
-        else:
+                await qdrant_repo.upsert_chunks(points)
+        except Exception as vec_exc:
+            # The graph write already succeeded. A vector-store or model-download
+            # problem should not flip a usable document to "failed".
             points = []
+            vector_note = f"Graph saved. Vector index skipped: {vec_exc}"
+            log.warning(
+                "pipeline.ingestion.vectorize_failed",
+                job_id=job_id,
+                error=str(vec_exc),
+            )
 
         await postgres_repo.update_upload_status(
             job_id,
             status="complete",
             pipeline_stage="complete",
             entities_extracted=total_entities,
+            error_message=vector_note,
         )
 
         log.info(

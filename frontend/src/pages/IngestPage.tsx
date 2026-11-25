@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { UploadCloud, FileText, Loader2, AlertTriangle, CheckCircle2, Clock, XCircle, RefreshCw } from "lucide-react";
 import { useIngestDocument, useUploadsList } from "../hooks/useKiteApi";
-import type { IngestResponse } from "../lib/types";
+import type { IngestResponse, UploadRecord } from "../lib/types";
 
 interface TrackedJob extends IngestResponse {
   uploadedAt: string;
@@ -15,9 +15,53 @@ const STATUS_ICON: Record<string, React.ReactNode> = {
 
 const STATUS_COLOR: Record<string, string> = {
   queued:    "text-[#febc2e]",
+  parsing:   "text-[#febc2e]",
+  extracting:"text-[#febc2e]",
+  resolving: "text-[#febc2e]",
+  writing_graph: "text-[#febc2e]",
+  vectorizing: "text-[#febc2e]",
   complete:  "text-[#28c840]",
   failed:    "text-[#E08A3C]",
 };
+
+function JobRow({
+  filename,
+  docType,
+  jobId,
+  when,
+  status,
+  errorMessage,
+}: {
+  filename: string;
+  docType: string;
+  jobId: string;
+  when: string;
+  status: string;
+  errorMessage?: string | null;
+}) {
+  return (
+    <div className="border-b border-white/5 last:border-b-0">
+      <div className="grid grid-cols-5 gap-2 px-4 py-2.5 text-[12px] text-white/70">
+        <span className="flex items-center gap-2 truncate font-mono text-white/60">
+          <FileText className="h-3.5 w-3.5 shrink-0 text-white/30" />
+          {filename}
+        </span>
+        <span>{docType}</span>
+        <span className="font-mono text-white/45">{jobId.slice(0, 12)}</span>
+        <span className="text-white/40">{when}</span>
+        <span className={`flex items-center gap-1 ${STATUS_COLOR[status] ?? "text-white/50"}`}>
+          {status === "complete" || status === "failed" || status === "queued"
+            ? STATUS_ICON[status]
+            : <Loader2 className="h-3 w-3 animate-spin" />}
+          {status}
+        </span>
+      </div>
+      {errorMessage && status === "failed" && (
+        <p className="px-4 pb-2.5 text-[11px] leading-snug text-[#E08A3C]/90">{errorMessage}</p>
+      )}
+    </div>
+  );
+}
 
 export default function IngestPage() {
   const [sessionJobs, setSessionJobs] = useState<TrackedJob[]>([]);
@@ -39,9 +83,18 @@ export default function IngestPage() {
     });
   };
 
-  // Merge session jobs (immediate feedback) with backend list (persistent)
+  // Session rows stay on screen immediately. Their status is replaced by the
+  // polled upload record so "queued" moves to complete or failed on its own.
+  const uploadById = new Map((pastUploads ?? []).map((u) => [u.job_id, u]));
   const sessionJobIds = new Set(sessionJobs.map((j) => j.job_id));
   const backendRows = (pastUploads ?? []).filter((u) => !sessionJobIds.has(u.job_id));
+
+  const liveSession = sessionJobs.map((job) => {
+    const live: UploadRecord | undefined = uploadById.get(job.job_id);
+    return live
+      ? { ...job, status: live.status, doc_type: live.doc_type, error_message: live.error_message }
+      : { ...job, error_message: null as string | null };
+  });
 
   return (
     <div className="space-y-6">
@@ -121,36 +174,28 @@ export default function IngestPage() {
               <span>STATUS</span>
             </div>
 
-            {/* Session jobs first (immediate feedback) */}
-            {sessionJobs.map((job) => (
-              <div key={job.job_id} className="grid grid-cols-5 gap-2 border-b border-white/5 px-4 py-2.5 text-[12px] text-white/70 last:border-b-0">
-                <span className="flex items-center gap-2 truncate font-mono text-white/60">
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-white/30" />
-                  {job.filename}
-                </span>
-                <span>{job.doc_type}</span>
-                <span className="font-mono text-white/45">{job.job_id.slice(0, 12)}</span>
-                <span>{job.uploadedAt}</span>
-                <span className={`flex items-center gap-1 ${STATUS_COLOR[job.status] ?? "text-white/50"}`}>
-                  {STATUS_ICON[job.status] ?? <Clock className="h-3 w-3" />} {job.status}
-                </span>
-              </div>
+            {liveSession.map((job) => (
+              <JobRow
+                key={job.job_id}
+                filename={job.filename}
+                docType={job.doc_type}
+                jobId={job.job_id}
+                when={job.uploadedAt}
+                status={job.status}
+                errorMessage={job.error_message}
+              />
             ))}
 
-            {/* Backend persistent history */}
             {backendRows.map((job) => (
-              <div key={job.job_id} className="grid grid-cols-5 gap-2 border-b border-white/5 px-4 py-2.5 text-[12px] text-white/70 last:border-b-0">
-                <span className="flex items-center gap-2 truncate font-mono text-white/60">
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-white/30" />
-                  {job.filename}
-                </span>
-                <span>{job.doc_type}</span>
-                <span className="font-mono text-white/45">{job.job_id.slice(0, 12)}</span>
-                <span className="text-white/40">{job.created_at ? new Date(job.created_at).toLocaleString() : "—"}</span>
-                <span className={`flex items-center gap-1 ${STATUS_COLOR[job.status] ?? "text-white/50"}`}>
-                  {STATUS_ICON[job.status] ?? <Clock className="h-3 w-3" />} {job.status}
-                </span>
-              </div>
+              <JobRow
+                key={job.job_id}
+                filename={job.filename}
+                docType={job.doc_type}
+                jobId={job.job_id}
+                when={job.created_at ? new Date(job.created_at).toLocaleString() : "—"}
+                status={job.status}
+                errorMessage={job.error_message}
+              />
             ))}
           </>
         )}

@@ -38,8 +38,9 @@ class Neo4jRepo:
                                   n.aliases = $aliases, n.source_doc_ids = [$doc_id]
                     ON MATCH SET n.aliases = [x IN n.aliases WHERE NOT x IN $aliases] + $aliases,
                                  n.source_doc_ids = [x IN n.source_doc_ids WHERE x <> $doc_id] + [$doc_id]
-                    """, id=e.tag_id, type=e.type, location=e.location, criticality=e.criticality, 
-                         aliases=e.aliases, doc_id=result.doc_id)
+                    """, id=e.tag_id, type=e.type, location=e.location,
+                         criticality=e.criticality.value if e.criticality else None,
+                         aliases=list(e.aliases or []), doc_id=result.doc_id)
                 
                 # 2. Failure
                 for f in result.failures:
@@ -50,7 +51,9 @@ class Neo4jRepo:
                     ON MATCH SET n.source_doc_ids = [x IN n.source_doc_ids WHERE x <> $doc_id] + [$doc_id]
                     MERGE (e:Equipment {id: $eq_id})
                     MERGE (n)-[:AFFECTS]->(e)
-                    """, id=f.failure_id, desc=f.description, date=f.date, severity=f.severity, 
+                    """, id=f.failure_id, desc=f.description,
+                         date=f.date.isoformat() if f.date else None,
+                         severity=f.severity.value if f.severity else None,
                          eq_id=f.equipment_tag, doc_id=result.doc_id)
                 
                 # 3. Procedure
@@ -118,9 +121,17 @@ class Neo4jRepo:
                 # Relationships. Labels must be the enum value ("Equipment"), not
                 # "NodeLabel.EQUIPMENT", which Neo4j rejects.
                 for rel in result.relationships:
-                    from_label = graph_token(rel.from_label)
-                    to_label = graph_token(rel.to_label)
-                    rel_type = graph_token(rel.rel_type)
+                    try:
+                        from_label = graph_token(rel.from_label)
+                        to_label = graph_token(rel.to_label)
+                        rel_type = graph_token(rel.rel_type)
+                    except ValueError as token_exc:
+                        log.warning(
+                            "neo4j.write_extraction_result.skipped_relationship",
+                            error=str(token_exc),
+                            doc_id=result.doc_id,
+                        )
+                        continue
                     await tx.run(f"""
                     MERGE (a:{from_label} {{id: $from_id}})
                     MERGE (b:{to_label} {{id: $to_id}})

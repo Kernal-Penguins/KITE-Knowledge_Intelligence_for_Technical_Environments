@@ -4,33 +4,199 @@ providers/gemini_provider.py
 Gemini implementation of LLMProvider.
 """
 import asyncio
+import json
+import re
 
 from google import genai
 
 from app.config import settings
 from app.infrastructure.logger import log
 from app.providers.base import LLMProvider
-import re
-from app.shared.schemas import Equipment, Failure, ExtractionResult
+from app.shared.ontology import NodeLabel, RelType
+from app.shared.schemas import Equipment, ExtractionResult, Failure, Relationship, WorkOrder
+
+_TAG_RE = re.compile(r"\b(?:P|CV|CB|TK|GEN|AC|FN|MTR|HX)-\d+\b", re.IGNORECASE)
+_WO_RE = re.compile(r"\bWO-\d+\b", re.IGNORECASE)
+_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_LEVELS = {"low": "Low", "medium": "Medium", "high": "High", "critical": "Critical"}
+_FAILURE_WORDS = ("fail", "leak", "overheat", "seizure", "damage", "vibration", "scoring")
+
+
+def _opt_str(value: object) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _opt_level(value: object) -> str | None:
+    text = _opt_str(value)
+    if text is None:
+        return None
+    return _LEVELS.get(text.lower())
+
+
+def _opt_date(value: object) -> str | None:
+    text = _opt_str(value)
+    if text is None:
+        return None
+    match = _DATE_RE.search(text)
+    return match.group(1) if match else None
 
 
 def _fallback_entity_extraction(text: str, doc_id: str) -> ExtractionResult:
-    """Regex fallback to extract key equipment & failure entities when LLM API rate limits occur."""
-    tags = set(re.findall(r'\b(?:P-\d+|CV-\d+|CB-\d+|TK-\d+|GEN-\d+|AC-\d+|FN-\d+|MTR-\d+|Pump \d+|Control Valve \d+|Conveyor \d+)\b', text, re.IGNORECASE))
-    equipment_list = [Equipment(tag_id=t, type="Industrial Equipment", source_doc_ids=[doc_id]) for t in tags]
-    
-    failures = []
-    if any(k in text.lower() for k in ["fail", "leak", "overheat", "seizure", "damage", "vibration"]):
-        for t in tags:
-            failures.append(Failure(failure_id=f"F-{doc_id[-6:]}", description=text[:200], equipment_tag=t, source_doc_ids=[doc_id]))
-            
+    """Pull equipment tags and work orders from the document when the LLM is unavailable."""
+    tags: list[str] = []
+    seen: set[str] = set()
+    for match in _TAG_RE.findall(text):
+        tag = match.upper()
+        if tag not in seen:
+            seen.add(tag)
+            tags.append(tag)
+
+    equipment: list[Equipment] = []
+    for tag in tags:
+        detail = re.search(rf"{re.escape(tag)}\s*\(([^)]+)\)", text, re.IGNORECASE)
+        eq_type = "Industrial Equipment"
+        if detail:
+            eq_type = detail.group(1).split(",")[0].strip() or eq_type
+        equipment.append(Equipment(tag_id=tag, type=eq_type, source_doc_ids=[doc_id]))
+
+    date = _DATE_RE.search(text)
+    iso_date = date.group(1) if date else None
+    summary = next((line.strip() for line in text.splitlines() if line.strip()), "Failure noted")[:200]
+
+    failures: list[Failure] = []
+    if any(word in text.lower() for word in _FAILURE_WORDS):
+        for tag in tags:
+            failures.append(
+                Failure(
+                    failure_id=f"F-{tag}-{doc_id[-6:]}",
+                    description=summary,
+                    equipment_tag=tag,
+                    date=iso_date,
+                    source_doc_ids=[doc_id],
+                )
+            )
+
+    work_orders: list[WorkOrder] = []
+    for wo_id in dict.fromkeys(match.upper() for match in _WO_RE.findall(text)):
+        work_orders.append(
+            WorkOrder(
+                wo_id=wo_id,
+                date=iso_date,
+                description="Work order referenced in the document",
+                source_doc_ids=[doc_id],
+            )
+        )
+
+    relationships: list[Relationship] = []
+    for failure in failures:
+        relationships.append(
+            Relationship(
+                from_id=failure.equipment_tag,
+                from_label=NodeLabel.EQUIPMENT,
+                to_id=failure.failure_id,
+                to_label=NodeLabel.FAILURE,
+                rel_type=RelType.HAS_FAILURE,
+                source_doc_ids=[doc_id],
+            )
+        )
+        if work_orders:
+            relationships.append(
+                Relationship(
+                    from_id=failure.failure_id,
+                    from_label=NodeLabel.FAILURE,
+                    to_id=work_orders[0].wo_id,
+                    to_label=NodeLabel.WORK_ORDER,
+                    rel_type=RelType.RESOLVED_BY,
+                    source_doc_ids=[doc_id],
+                )
+            )
+
     return ExtractionResult(
         doc_id=doc_id,
-        equipment=equipment_list,
+        equipment=equipment,
         failures=failures,
+        work_orders=work_orders,
+        relationships=relationships,
         extraction_confidence=0.7,
-        extraction_errors=["Rate-limited by LLM API; used heuristic fallback"]
+        extraction_errors=["LLM extraction unavailable; used document text fallback"],
     )
+
+
+def _salvage_extraction(payload: object, doc_id: str) -> ExtractionResult | None:
+    """Keep valid entities when the model JSON does not match the full schema."""
+    if not isinstance(payload, dict):
+        return None
+
+    equipment: list[Equipment] = []
+    for item in payload.get("equipment") or []:
+        if not isinstance(item, dict):
+            continue
+        tag = _opt_str(item.get("tag_id"))
+        if not tag:
+            continue
+        try:
+            equipment.append(
+                Equipment(
+                    tag_id=tag,
+                    type=_opt_str(item.get("type")) or "Equipment",
+                    location=_opt_str(item.get("location")),
+                    criticality=_opt_level(item.get("criticality")),
+                    aliases=[str(alias) for alias in (item.get("aliases") or []) if alias],
+                    source_doc_ids=[doc_id],
+                )
+            )
+        except Exception:
+            continue
+
+    failures: list[Failure] = []
+    for item in payload.get("failures") or []:
+        if not isinstance(item, dict):
+            continue
+        failure_id = _opt_str(item.get("failure_id"))
+        equipment_tag = _opt_str(item.get("equipment_tag"))
+        description = _opt_str(item.get("description"))
+        if not failure_id or not equipment_tag or not description:
+            continue
+        try:
+            failures.append(
+                Failure(
+                    failure_id=failure_id,
+                    description=description,
+                    equipment_tag=equipment_tag,
+                    date=_opt_date(item.get("date")),
+                    severity=_opt_level(item.get("severity")),
+                    source_doc_ids=[doc_id],
+                )
+            )
+        except Exception:
+            continue
+
+    if not equipment and not failures:
+        return None
+
+    return ExtractionResult(
+        doc_id=doc_id,
+        equipment=equipment,
+        failures=failures,
+        extraction_confidence=0.8,
+        extraction_errors=["Model JSON was partial; kept the entities that validated"],
+    )
+
+
+def _parse_extraction_response(raw: str, doc_id: str) -> ExtractionResult | None:
+    try:
+        result = ExtractionResult.model_validate_json(raw)
+        result.doc_id = doc_id
+        return result
+    except Exception:
+        pass
+    try:
+        return _salvage_extraction(json.loads(raw), doc_id)
+    except Exception:
+        return None
 
 
 def _get_cleaned_extraction_schema():
@@ -56,8 +222,20 @@ class GeminiProvider(LLMProvider):
     ]
 
     def __init__(self):
-        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        self.client = None
         self._cleaned_schema = _get_cleaned_extraction_schema()
+        key = settings.GEMINI_API_KEY.strip()
+        if not key:
+            log.warning("gemini.api_key_missing")
+            return
+        try:
+            self.client = genai.Client(
+                api_key=key,
+                http_options=genai.types.HttpOptions(timeout=30_000),
+            )
+        except Exception as exc:
+            log.warning("gemini.client_init_failed", error=str(exc))
+            self.client = None
 
     async def extract_entities(self, text: str, doc_id: str) -> ExtractionResult:
         log.info("gemini.extract_entities.started", doc_id=doc_id)
@@ -242,45 +420,48 @@ DOCUMENT
 """
 
         async def _call_api_with_retry():
-            for outer_attempt in range(2):
-                for model_name in self.FLASH_MODELS:
-                    for attempt in range(2):
-                        try:
-                            log.info("gemini.extract_entities.trying", doc_id=doc_id, model=model_name, attempt=attempt+1)
-                            return await asyncio.to_thread(
-                                self.client.models.generate_content,
-                                model=model_name,
-                                contents=prompt,
-                                config=genai.types.GenerateContentConfig(
-                                    response_mime_type="application/json",
-                                    response_schema=self._cleaned_schema,
-                                    temperature=0.0,
-                                )
-                            )
-                        except Exception as e:
-                            err_msg = str(e)
-                            if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
-                                log.warning("gemini.extract_entities.rate_limited", model=model_name, attempt=attempt+1)
-                                if attempt == 0:
-                                    await asyncio.sleep(1.0)
-                                else:
-                                    break
-                            else:
-                                raise e
-                log.warning("gemini.extract_entities.all_models_rate_limited", outer_attempt=outer_attempt+1, wait_sec=2.0)
-                await asyncio.sleep(2.0)
+            if self.client is None:
+                return None
+            last_error = "no attempt"
+            for model_name in self.FLASH_MODELS:
+                try:
+                    log.info("gemini.extract_entities.trying", doc_id=doc_id, model=model_name)
+                    return await asyncio.wait_for(
+                        asyncio.to_thread(
+                            self.client.models.generate_content,
+                            model=model_name,
+                            contents=prompt,
+                            config=genai.types.GenerateContentConfig(
+                                response_mime_type="application/json",
+                                response_schema=self._cleaned_schema,
+                                temperature=0.0,
+                            ),
+                        ),
+                        timeout=35,
+                    )
+                except Exception as exc:
+                    last_error = str(exc)
+                    log.warning(
+                        "gemini.extract_entities.attempt_failed",
+                        model=model_name,
+                        error=last_error,
+                    )
+            log.warning("gemini.extract_entities.giving_up", doc_id=doc_id, error=last_error)
             return None
 
-        response = await _call_api_with_retry()
-        if response is None:
-            log.warning("gemini.extract_entities.fallback_to_heuristics", doc_id=doc_id)
-            return _fallback_entity_extraction(text, doc_id)
+        try:
+            response = await _call_api_with_retry()
+            raw = getattr(response, "text", None) if response is not None else None
+            if raw:
+                parsed = _parse_extraction_response(raw, doc_id)
+                if parsed is not None and (parsed.equipment or parsed.failures or parsed.work_orders):
+                    log.info("gemini.extract_entities.completed", doc_id=doc_id)
+                    return parsed
+        except Exception as exc:
+            log.warning("gemini.extract_entities.failed", doc_id=doc_id, error=str(exc))
 
-        log.info("gemini.extract_entities.completed", doc_id=doc_id)
-        result = ExtractionResult.model_validate_json(response.text)
-        result.doc_id = doc_id
-        
-        return result
+        log.warning("gemini.extract_entities.fallback_to_heuristics", doc_id=doc_id)
+        return _fallback_entity_extraction(text, doc_id)
 
     async def adjudicate_entities(self, candidate_a: str, candidate_b: str, context: str) -> str:
         """Adjudicate between two similar entity strings."""
@@ -343,7 +524,6 @@ DOCUMENT
 
         try:
             response = await asyncio.to_thread(_call_api)
-            import json
             indices = json.loads(response.text)
             filtered_context = [context[i] for i in indices if 0 <= i < len(context)]
             log.info("gemini.rerank_context.completed", original_size=len(context), filtered_size=len(filtered_context))
