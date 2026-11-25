@@ -96,7 +96,7 @@ async def metrics() -> MetricsResponse:
     try:
         from app.shared.constants import QDRANT_COLLECTION_NAME
         info = await qdrant_client.client.get_collection(QDRANT_COLLECTION_NAME)
-        qdrant_vectors = info.vectors_count or 0
+        qdrant_vectors = getattr(info, "points_count", None) or getattr(info, "vectors_count", None) or 0
     except Exception as exc:
         log.warning("metrics.qdrant_failed", error=str(exc))
 

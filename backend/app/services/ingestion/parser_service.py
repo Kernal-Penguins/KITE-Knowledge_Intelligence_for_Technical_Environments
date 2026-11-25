@@ -7,6 +7,9 @@ from pathlib import Path
 from app.infrastructure.logger import log
 
 
+_PLAIN_TEXT_EXTENSIONS = {".txt", ".md", ".csv", ".log", ".json"}
+
+
 class ParserService:
     def __init__(self):
         self._converter = None
@@ -30,14 +33,23 @@ class ParserService:
         """Parse a document into markdown representation using Docling with fallbacks."""
         log.info("parser_service.converting", file_path=str(file_path))
         file_path = Path(file_path)
-        
+
+        # Text files do not need Docling. Loading it downloads models and can
+        # return an empty document, which fails the whole ingest job.
+        if file_path.suffix.lower() in _PLAIN_TEXT_EXTENSIONS:
+            md_text = file_path.read_text(encoding="utf-8", errors="ignore")
+            log.info("parser_service.converted_plain_text", file_path=str(file_path), md_length=len(md_text))
+            return md_text
+
         # Try Docling first if available
         if self.converter is not None:
             try:
                 result = self.converter.convert(file_path)
                 md_text = result.document.export_to_markdown()
-                log.info("parser_service.converted_via_docling", file_path=str(file_path), md_length=len(md_text))
-                return md_text
+                if md_text.strip():
+                    log.info("parser_service.converted_via_docling", file_path=str(file_path), md_length=len(md_text))
+                    return md_text
+                log.warning("parser_service.docling_empty_using_fallback", file_path=str(file_path))
             except Exception as e:
                 log.warning("parser_service.docling_failed_using_fallback", file_path=str(file_path), error=str(e))
 

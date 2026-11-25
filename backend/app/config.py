@@ -9,6 +9,7 @@ Usage:
 """
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -32,6 +33,17 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str        = ""
     GROQ_API_KEY: str          = ""
     OLLAMA_BASE_URL: str       = "http://localhost:11434"
+
+    @field_validator("GEMINI_API_KEY", "OPENAI_API_KEY", "GROQ_API_KEY", mode="before")
+    @classmethod
+    def _clean_api_key(cls, value: object) -> object:
+        """Drop wrapping quotes and placeholder values left in .env files."""
+        if not isinstance(value, str):
+            return value
+        cleaned = value.strip().strip('"').strip("'").strip()
+        if cleaned.lower() in {"", "your_key_here", "changeme", "none", "null"}:
+            return ""
+        return cleaned
 
     # ── Neo4j ────────────────────────────────────────────────
     NEO4J_URI: str      = "bolt://localhost:7687"

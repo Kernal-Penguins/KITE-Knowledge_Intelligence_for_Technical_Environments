@@ -27,12 +27,13 @@ class QdrantRepo:
         """Search for the most similar chunks."""
         client = qdrant_client.client
         try:
-            from qdrant_client.http.models import SearchRequest
-            res = await client.http.search_api.search_points(
+            res = await client.query_points(
                 collection_name=QDRANT_COLLECTION_NAME,
-                search_request=SearchRequest(vector=query_vector, limit=limit, with_payload=True),
+                query=query_vector,
+                limit=limit,
+                with_payload=True,
             )
-            return res.result
+            return list(res.points)
         except Exception as e:
             from app.infrastructure.logger import log
             log.warning("qdrant_repo.search_failed", error=str(e))

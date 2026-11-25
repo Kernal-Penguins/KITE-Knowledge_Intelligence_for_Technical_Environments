@@ -51,7 +51,7 @@ export function useUploadsList() {
   return useQuery({
     queryKey: ["uploads"],
     queryFn: async () => (await api.get<UploadRecord[]>(ROUTES.uploads)).data,
-    refetchInterval: 10_000,
+    refetchInterval: 4_000,
   });
 }
 
