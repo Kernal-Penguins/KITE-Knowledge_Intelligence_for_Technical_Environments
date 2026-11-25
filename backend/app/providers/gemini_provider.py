@@ -229,9 +229,11 @@ class GeminiProvider(LLMProvider):
             log.warning("gemini.api_key_missing")
             return
         try:
+            # JSON mode (response_mime_type / response_schema) is rejected on v1:
+            # "JSON mode is not enabled for api version v1. Use api version v1beta".
             self.client = genai.Client(
                 api_key=key,
-                http_options=genai.types.HttpOptions(timeout=30_000),
+                http_options=genai.types.HttpOptions(api_version="v1beta", timeout=30_000),
             )
         except Exception as exc:
             log.warning("gemini.client_init_failed", error=str(exc))

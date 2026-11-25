@@ -76,6 +76,26 @@ def test_extract_entities_falls_back_when_gemini_errors():
     assert result.work_orders[0].wo_id == "WO-10201"
 
 
+def test_gemini_client_uses_json_mode_api_version(monkeypatch):
+    from app.config import settings
+    from app.providers import gemini_provider as gp
+
+    captured: dict = {}
+
+    class FakeClient:
+        def __init__(self, *, api_key, http_options):
+            captured["api_key"] = api_key
+            captured["http_options"] = http_options
+
+    monkeypatch.setattr(gp.genai, "Client", FakeClient)
+    monkeypatch.setattr(settings, "GEMINI_API_KEY", "test-key")
+    provider = gp.GeminiProvider()
+    assert provider.client is not None
+    assert captured["api_key"] == "test-key"
+    # conftest stubs google.genai, so assert the kwargs passed to HttpOptions.
+    assert gp.genai.types.HttpOptions.call_args.kwargs["api_version"] == "v1beta"
+
+
 def test_api_key_strips_quotes():
     from app.config import Settings
 
